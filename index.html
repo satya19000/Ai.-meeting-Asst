@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0f1e">
+<meta name="description" content="MeetIQ AI - AI-Powered Meeting Intelligence Platform">
+<title>MeetIQ AI – Meeting Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-deep:#060c1a;
+  --bg-surface:#0d1528;
+  --bg-card:#111d35;
+  --bg-elevated:#162040;
+  --border:#1e2d4a;
+  --border-bright:#2a3f6a;
+  --accent:#f5a623;
+  --accent-dim:#c47d0e;
+  --accent-glow:rgba(245,166,35,0.15);
+  --cyan:#00d4ff;
+  --cyan-dim:rgba(0,212,255,0.1);
+  --green:#00e676;
+  --red:#ff4757;
+  --purple:#7c4dff;
+  --text-primary:#e8edf7;
+  --text-secondary:#7a8fb5;
+  --text-muted:#3d5070;
+  --font-display:'Syne',sans-serif;
+  --font-body:'Outfit',sans-serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:12px;
+  --radius-sm:8px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow-glow:0 0 40px rgba(245,166,35,0.08);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg-deep);
+  color:var(--text-primary);
+  font-family:var(--font-body);
+  font-size:14px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg-deep)}
+::-webkit-scrollbar-thumb{background:var(--border-bright);border-radius:2px}
+#root{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:240px;
+  min-height:100vh;
+  background:var(--bg-surface);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  position:fixed;
+  left:0;top:0;bottom:0;
+  z-index:100;
+  transition:transform .3s ease;
+}
+.sidebar-logo{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--accent),#e8891a);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  box-shadow:0 0 20px rgba(245,166,35,0.3);
+}
+.logo-text{font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-0.5px}
+.logo-text span{color:var(--accent)}
+.logo-badge{font-size:9px;background:var(--accent);color:#000;padding:1px 5px;border-radius:4px;font-weight:700;letter-spacing:0.5px;margin-left:4px;align-self:flex-start;margin-top:3px}
+
+.sidebar-nav{flex:1;padding:12px 12px;overflow-y:auto}
+.nav-section{margin-bottom:20px}
+.nav-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;padding:0 8px;margin-bottom:6px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all .2s;
+  color:var(--text-secondary);
+  font-size:13px;font-weight:500;
+  position:relative;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:var(--bg-card);color:var(--text-primary)}
+.nav-item.active{background:var(--accent-glow);color:var(--accent);border:1px solid rgba(245,166,35,0.2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--accent);border-radius:0 2px 2px 0}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--accent);color:#000;font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px}
+.nav-badge.red{background:var(--red)}
+.nav-badge.green{background:var(--green)}
+
+.sidebar-footer{
+  padding:14px 16px;
+  border-top:1px solid var(--border);
+}
+.user-card{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;
+  background:var(--bg-card);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  cursor:pointer;
+}
+.user-avatar{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+  flex-shrink:0;
+}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:10px;color:var(--text-muted)}
+
+/* MAIN CONTENT */
+.main-content{
+  margin-left:240px;
+  flex:1;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+.topbar{
+  height:60px;
+  background:var(--bg-surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;
+  padding:0 28px;
+  position:sticky;top:0;z-index:50;
+  gap:16px;
+}
+.topbar-title{font-family:var(--font-display);font-size:18px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;
+  border-radius:var(--radius-sm);
+  font-size:12px;font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  border:none;
+  font-family:var(--font-body);
+  letter-spacing:0.3px;
+}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{background:#f5b83a;box-shadow:0 0 20px rgba(245,166,35,0.3)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg-card);color:var(--text-primary);border-color:var(--border-bright)}
+.btn-danger{background:rgba(255,71,87,0.15);color:var(--red);border:1px solid rgba(255,71,87,0.3)}
+.btn-danger:hover{background:rgba(255,71,87,0.25)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center;font-size:16px}
+
+.page-content{padding:28px;flex:1}
+
+/* STATUS PILL */
+.status-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;
+  font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;
+}
+.status-live{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.3)}
+.status-live::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+.status-pending{background:rgba(245,166,35,0.12);color:var(--accent);border:1px solid rgba(245,166,35,0.3)}
+.status-done{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.status-error{background:rgba(255,71,87,0.1);color:var(--red);border:1px solid rgba(255,71,87,0.2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* CARDS */
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border-bright)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text-primary)}
+.card-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  position:relative;overflow:hidden;
+  transition:all .25s;
+}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--border-bright);box-shadow:var(--shadow)}
+.stat-card::after{
+  content:'';position:absolute;top:0;right:0;
+  width:80px;height:80px;
+  border-radius:50%;
+  transform:translate(30%,-30%);
+  opacity:0.06;
+}
+.stat-card.amber::after{background:var(--accent)}
+.stat-card.cyan::after{background:var(--cyan)}
+.stat-card.green::after{background:var(--green)}
+.stat-card.purple::after{background:var(--purple)}
+.stat-icon{font-size:24px;margin-bottom:10px}
+.stat-value{font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px;font-weight:500}
+.stat-delta{font-size:10px;margin-top:8px;font-weight:600}
+.stat-delta.up{color:var(--green)}
+.stat-delta.down{color:var(--red)}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:20px}
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+
+/* TABLES */
+.table-wrap{overflow:auto;border-radius:var(--radius-sm);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg-elevated);padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border)}
+td{padding:12px 14px;font-size:12px;border-bottom:1px solid rgba(30,45,74,0.5);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;letter-spacing:0.3px;text-transform:uppercase}
+.form-input,.form-select,.form-textarea{
+  width:100%;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:10px 14px;
+  color:var(--text-primary);
+  font-size:13px;
+  font-family:var(--font-body);
+  transition:border-color .2s,box-shadow .2s;
+  outline:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(245,166,35,0.1);
+}
+.form-textarea{resize:vertical;min-height:80px}
+.form-select option{background:var(--bg-surface)}
+.input-with-icon{position:relative}
+.input-with-icon .form-input{padding-left:38px}
+.input-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:15px}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{
+  padding:10px 18px;
+  font-size:12px;font-weight:600;
+  cursor:pointer;
+  color:var(--text-muted);
+  border-bottom:2px solid transparent;
+  transition:all .2s;
+  white-space:nowrap;
+}
+.tab:hover{color:var(--text-secondary)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* TRANSCRIPT */
+.transcript-line{
+  display:grid;
+  grid-template-columns:100px 1fr;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid rgba(30,45,74,0.4);
+}
+.transcript-time{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);padding-top:2px}
+.transcript-speaker{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:3px}
+.transcript-text{font-size:13px;color:var(--text-primary);line-height:1.5}
+.transcript-text.telugu{font-size:14px}
+
+/* ACTION ITEM */
+.action-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;
+  background:var(--bg-elevated);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+  margin-bottom:8px;
+  transition:border-color .2s;
+}
+.action-item:hover{border-color:var(--border-bright)}
+.action-checkbox{
+  width:16px;height:16px;
+  border:2px solid var(--border-bright);
+  border-radius:4px;
+  flex-shrink:0;margin-top:1px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.action-checkbox.checked{background:var(--accent);border-color:var(--accent);color:#000;font-size:10px}
+.action-details{flex:1}
+.action-task{font-size:12px;font-weight:500;color:var(--text-primary)}
+.action-meta{display:flex;gap:8px;margin-top:4px}
+.action-tag{font-size:10px;padding:1px 7px;border-radius:4px;font-weight:600}
+.tag-officer{background:rgba(124,77,255,0.15);color:#a87fff}
+.tag-deadline{background:rgba(255,71,87,0.12);color:var(--red)}
+.tag-dept{background:var(--cyan-dim);color:var(--cyan)}
+.tag-priority{background:rgba(245,166,35,0.12);color:var(--accent)}
+
+/* MEETING CARD */
+.meeting-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  display:flex;align-items:center;gap:14px;
+  transition:all .2s;
+  cursor:pointer;
+  margin-bottom:10px;
+}
+.meeting-card:hover{border-color:var(--border-bright);transform:translateX(2px)}
+.meeting-platform{
+  width:40px;height:40px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+}
+.platform-zoom{background:rgba(35,113,244,0.15);border:1px solid rgba(35,113,244,0.3)}
+.platform-meet{background:rgba(0,172,76,0.15);border:1px solid rgba(0,172,76,0.3)}
+.platform-teams{background:rgba(100,65,180,0.15);border:1px solid rgba(100,65,180,0.3)}
+.platform-webex{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2)}
+.meeting-info{flex:1;min-width:0}
+.meeting-title{font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meeting-meta{font-size:11px;color:var(--text-muted);margin-top:3px;display:flex;gap:10px}
+.meeting-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* WAVEFORM */
+.waveform{
+  display:flex;align-items:center;gap:2px;
+  height:32px;
+}
+.wave-bar{
+  width:3px;
+  background:var(--accent);
+  border-radius:2px;
+  animation:wave 1s ease-in-out infinite;
+  opacity:0.7;
+}
+@keyframes wave{
+  0%,100%{height:4px}
+  50%{height:100%}
+}
+
+/* PROGRESS */
+.progress-bar{
+  height:4px;
+  background:var(--bg-elevated);
+  border-radius:2px;
+  overflow:hidden;
+  margin-top:6px;
+}
+.progress-fill{
+  height:100%;
+  border-radius:2px;
+  transition:width .5s ease;
+}
+
+/* AI CHAT */
+.chat-container{display:flex;flex-direction:column;height:420px}
+.chat-messages{flex:1;overflow-y:auto;padding:12px 0;display:flex;flex-direction:column;gap:10px}
+.chat-msg{display:flex;gap:10px;align-items:flex-start}
+.chat-msg.user{flex-direction:row-reverse}
+.chat-avatar{
+  width:28px;height:28px;
+  border-radius:50%;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;
+}
+.chat-ai-avatar{background:linear-gradient(135deg,var(--accent),#e8891a)}
+.chat-user-avatar{background:linear-gradient(135deg,var(--purple),var(--cyan))}
+.chat-bubble{
+  max-width:80%;
+  padding:10px 14px;
+  border-radius:12px;
+  font-size:12px;line-height:1.5;
+}
+.chat-ai{background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-primary)}
+.chat-user-msg{background:rgba(245,166,35,0.15);border:1px solid rgba(245,166,35,0.25);color:var(--text-primary)}
+.chat-input-row{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* SLIDE CAPTURE */
+.slide-item{
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  transition:all .2s;
+  cursor:pointer;
+}
+.slide-item:hover{border-color:var(--accent);box-shadow:0 0 20px rgba(245,166,35,0.1)}
+.slide-preview{
+  aspect-ratio:16/9;
+  background:linear-gradient(135deg,#1a2540,#0d1528);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+.slide-preview::before{
+  content:'';
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,255,0.01) 10px,
+    rgba(255,255,255,0.01) 20px
+  );
+}
+.slide-num{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.6);color:var(--accent);font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;font-family:var(--font-mono)}
+.slide-label{position:absolute;bottom:6px;left:6px;right:6px;background:rgba(0,0,0,0.7);color:var(--text-secondary);font-size:9px;padding:3px 7px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slide-info{padding:10px}
+.slide-title-text{font-size:11px;font-weight:600;color:var(--text-primary)}
+.slide-disc{font-size:10px;color:var(--text-muted);margin-top:3px;line-height:1.4}
+
+/* SEARCH */
+.search-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:0 14px;
+  transition:border-color .2s;
+}
+.search-bar:focus-within{border-color:var(--accent)}
+.search-bar input{
+  flex:1;background:transparent;border:none;
+  padding:10px 0;color:var(--text-primary);font-size:13px;
+  font-family:var(--font-body);outline:none;
+}
+.search-bar input::placeholder{color:var(--text-muted)}
+
+/* NOTIFICATION BADGE */
+.notif-dot{
+  position:absolute;
+  top:6px;right:6px;
+  width:8px;height:8px;
+  background:var(--red);
+  border-radius:50%;
+  border:2px solid var(--bg-surface);
+}
+
+/* TIMELINE */
+.timeline-item{
+  display:flex;gap:14px;
+  padding:12px 0;
+  position:relative;
+}
+.timeline-item::before{
+  content:'';
+  position:absolute;
+  left:19px;top:44px;bottom:-12px;
+  width:1px;background:var(--border);
+}
+.timeline-item:last-child::before{display:none}
+.timeline-dot{
+  width:10px;height:10px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-top:6px;
+  border:2px solid;
+}
+.tl-done{border-color:var(--green);background:rgba(0,230,118,0.2)}
+.tl-active{border-color:var(--accent);background:rgba(245,166,35,0.2);animation:pulse 1.5s infinite}
+.tl-pending{border-color:var(--border-bright);background:transparent}
+.timeline-body{flex:1}
+.timeline-title{font-size:12px;font-weight:600;color:var(--text-primary)}
+.timeline-time{font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px}
+.timeline-note{font-size:11px;color:var(--text-secondary);margin-top:3px}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:8px}
+.toggle{
+  width:36px;height:20px;
+  background:var(--border-bright);
+  border-radius:10px;
+  position:relative;cursor:pointer;
+  transition:background .2s;
+  flex-shrink:0;
+}
+.toggle.on{background:var(--accent)}
+.toggle::after{
+  content:'';
+  width:14px;height:14px;
+  background:#fff;border-radius:50%;
+  position:absolute;top:3px;left:3px;
+  transition:left .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.3);
+}
+.toggle.on::after{left:19px}
+.toggle-label{font-size:12px;color:var(--text-secondary)}
+
+/* ANIMATIONS */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.animate-fade-up{animation:fadeInUp .4s ease both}
+.anim-d1{animation-delay:.05s}
+.anim-d2{animation-delay:.1s}
+.anim-d3{animation-delay:.15s}
+.anim-d4{animation-delay:.2s}
+.anim-d5{animation-delay:.25s}
+
+/* RECORDING INDICATOR */
+.rec-indicator{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;
+  background:rgba(255,71,87,0.12);
+  border:1px solid rgba(255,71,87,0.3);
+  border-radius:20px;
+  font-size:10px;font-weight:700;color:var(--red);
+  letter-spacing:0.5px;
+}
+.rec-dot{width:7px;height:7px;background:var(--red);border-radius:50%;animation:pulse 1s infinite}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(6,12,26,0.85);
+  backdrop-filter:blur(4px);
+  z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  animation:fadeIn .2s;
+}
+.modal{
+  background:var(--bg-card);
+  border:1px solid var(--border-bright);
+  border-radius:16px;
+  padding:28px;
+  width:min(560px,90vw);
+  max-height:85vh;overflow-y:auto;
+  animation:fadeInUp .25s;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-family:var(--font-display);font-size:18px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text-primary)}
+
+/* PLATFORM CHIPS */
+.platform-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.platform-chip{
+  padding:6px 12px;border-radius:20px;
+  font-size:11px;font-weight:600;
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;align-items:center;gap:5px;
+}
+.platform-chip:hover,.platform-chip.selected{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:16px 0}
+.divider-text{display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:11px;margin:16px 0}
+.divider-text::before,.divider-text::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* LANGUAGE BADGE */
+.lang-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 8px;border-radius:4px;
+  font-size:9px;font-weight:700;letter-spacing:0.5px;
+}
+.lang-en{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.lang-te{background:rgba(245,166,35,0.12);color:var(--accent);border:1px solid rgba(245,166,35,0.25)}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-1-2,.grid-2-1{grid-template-columns:1fr}
+  .topbar-title{font-size:14px}
+}
+
+/* GLOW EFFECTS */
+.glow-amber{box-shadow:0 0 30px rgba(245,166,35,0.15)}
+.glow-cyan{box-shadow:0 0 30px rgba(0,212,255,0.1)}
+
+/* AI PROCESSING */
+.ai-thinking{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--text-muted);
+  font-family:var(--font-mono);
+}
+.dot-blink{animation:pulse .8s infinite}
+.dot-blink:nth-child(2){animation-delay:.2s}
+.dot-blink:nth-child(3){animation-delay:.4s}
+
+/* TOOLTIP */
+[data-tip]{position:relative}
+[data-tip]:hover::after{
+  content:attr(data-tip);
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--bg-elevated);border:1px solid var(--border);
+  color:var(--text-secondary);font-size:10px;padding:4px 8px;border-radius:4px;
+  white-space:nowrap;z-index:99;pointer-events:none;
+}
+
+/* SPINNER */
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(245,166,35,0.2);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:inline-block;
+}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;padding:48px 24px;
+  color:var(--text-muted);
+}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:0.4}
+.empty-text{font-size:13px}
+
+/* EXPORT BUTTONS */
+.export-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* DONUT CHART */
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-svg{flex-shrink:0}
+.donut-legend{flex:1}
+.legend-item{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:11px;color:var(--text-secondary)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* RESPONSIVE GRID */
+@media(min-width:1280px){
+  .stats-grid{grid-template-columns:repeat(5,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback}=React;
+
+/* ---- DATA ---- */
+const MEETINGS_DATA=[
+  {id:1,title:"District Health Review – Q2 2026",platform:"zoom",date:"2026-05-13",time:"10:00 AM",duration:"1h 24m",status:"done",participants:12,actions:5,summary:true,telugu:true},
+  {id:2,title:"Vaccination Drive Coordination",platform:"meet",date:"2026-05-13",time:"02:30 PM",duration:"45m",status:"live",participants:8,actions:3,summary:false,telugu:false},
+  {id:3,title:"Dengue Prevention Taskforce",platform:"teams",date:"2026-05-12",time:"11:00 AM",duration:"2h 05m",status:"done",participants:15,actions:8,summary:true,telugu:true},
+  {id:4,title:"Field Staff Training Review",platform:"webex",date:"2026-05-11",time:"09:00 AM",duration:"55m",status:"done",participants:22,actions:6,summary:true,telugu:false},
+  {id:5,title:"Budget Allocation Meeting – FY26",platform:"zoom",date:"2026-05-15",time:"10:00 AM",duration:"—",status:"pending",participants:0,actions:0,summary:false,telugu:false},
+];
+
+const TRANSCRIPT_DATA=[
+  {time:"10:02 AM",speaker:"DMHO Dr. Rao",lang:"en",text:"Good morning everyone. Let's begin with the vaccination coverage report for last quarter."},
+  {time:"10:03 AM",speaker:"DIO Mrs. Lakshmi",lang:"en",text:"The coverage stands at 68% in urban areas, but rural zones show only 42% completion."},
+  {time:"10:04 AM",speaker:"DMHO Dr. Rao",lang:"te",text:"గ్రామీణ ప్రాంతాల్లో టీకాల కవరేజ్ చాలా తక్కువగా ఉంది. ఈ విషయంలో వెంటనే చర్యలు తీసుకోవాలి."},
+  {time:"10:05 AM",speaker:"Field Officer Ravi",lang:"en",text:"We faced logistical issues — cold chain failures in 3 mandals. Reporting to higher authorities."},
+  {time:"10:06 AM",speaker:"DIO Mrs. Lakshmi",lang:"en",text:"Special camps will be arranged in Vikarabad and Medchal mandals by May 20th."},
+  {time:"10:07 AM",speaker:"DMHO Dr. Rao",lang:"te",text:"జిల్లా మొత్తం మీద నెలాఖరులోగా 85% కవరేజ్ సాధించాలి. అందరూ కలిసి పని చేయాలి."},
+];
+
+const ACTION_ITEMS=[
+  {id:1,task:"Arrange vaccination camps in Vikarabad & Medchal mandals",officer:"DIO Mrs. Lakshmi",deadline:"20 May 2026",dept:"Public Health",priority:"High",done:false},
+  {id:2,task:"Fix cold chain failures in 3 mandals",officer:"Field Officer Ravi",deadline:"16 May 2026",dept:"Logistics",priority:"Critical",done:false},
+  {id:3,task:"Submit rural coverage report to state office",officer:"DMHO Dr. Rao",deadline:"18 May 2026",dept:"Administration",priority:"High",done:true},
+  {id:4,task:"Procure additional vaccine vials – 5000 doses",officer:"Store Manager",deadline:"17 May 2026",dept:"Procurement",priority:"Critical",done:false},
+  {id:5,task:"Coordinate with ASHA workers for door-to-door campaign",officer:"CHO Sunitha",deadline:"22 May 2026",dept:"Community",priority:"Medium",done:false},
+];
+
+const SLIDES_DATA=[
+  {id:1,title:"Q2 Vaccination Statistics",emoji:"📊",discussion:"Field surveillance is incomplete in rural areas. Only 42% coverage achieved."},
+  {id:2,title:"Cold Chain Infrastructure",emoji:"❄️",discussion:"3 mandal cold chain units reported failure. Emergency repair sanctioned."},
+  {id:3,title:"Target vs Achievement",emoji:"🎯",discussion:"Target of 85% must be reached by month end. Special drive planned."},
+  {id:4,title:"Resource Allocation",emoji:"💊",discussion:"5000 additional vials required. Budget Rs. 2.4L approved for procurement."},
+  {id:5,title:"Action Timeline",emoji:"📅",discussion:"Field camps scheduled for 18–22 May across all rural mandals."},
+  {id:6,title:"Next Review Date",emoji:"📌",discussion:"Next meeting scheduled on June 1. All officers to submit progress reports."},
+];
+
+const CHAT_INIT=[
+  {role:"ai",text:"నమస్కారం! I'm MeetIQ Assistant 🤖\n\nI can help you:\n• Summarize meetings in English or Telugu\n• List pending action items\n• Generate PDF/DOCX reports\n• Search past meetings\n• Translate transcripts\n\nWhat would you like to do?"},
+];
+
+const NOTIFICATIONS=[
+  {id:1,type:"live",msg:"Vaccination Drive Coordination meeting is LIVE now",time:"2m ago"},
+  {id:2,type:"action",msg:"Cold chain repair deadline is today — Field Officer Ravi",time:"1h ago"},
+  {id:3,type:"summary",msg:"District Health Review summary ready — download PDF",time:"3h ago"},
+  {id:4,type:"reminder",msg:"Budget Allocation Meeting on May 15 at 10:00 AM",time:"1d ago"},
+];
+
+/* ---- COMPONENTS ---- */
+
+function Sidebar({active,setActive,sidebarOpen,setSidebarOpen}){
+  const navItems=[
+    {id:"dashboard",icon:"⬡",label:"Dashboard"},
+    {id:"newmeeting",icon:"＋",label:"New Meeting",badge:"NEW"},
+    {id:"live",icon:"⏺",label:"Live Session",badge:"1",badgeColor:"red"},
+    {section:"Intelligence"},
+    {id:"transcripts",icon:"📝",label:"Transcripts"},
+    {id:"summaries",icon:"✦",label:"AI Summaries"},
+    {id:"mom",icon:"📋",label:"Minutes of Meeting"},
+    {id:"slides",icon:"🖼",label:"Slide Captures"},
+    {section:"Data"},
+    {id:"archive",icon:"⊘",label:"Meeting Archive"},
+    {id:"actions",icon:"◈",label:"Action Items",badge:"4",badgeColor:"amber"},
+    {id:"analytics",icon:"◉",label:"Analytics"},
+    {section:"Tools"},
+    {id:"chat",icon:"⚡",label:"AI Assistant"},
+    {id:"settings",icon:"◌",label:"Settings"},
+  ];
+  return(
+    <div className={`sidebar${sidebarOpen?" open":""}`}>
+      <div className="sidebar-logo">
+        <div className="logo-icon">🧠</div>
+        <div>
+          <div className="logo-text">Meet<span>IQ</span></div>
+        </div>
+        <span className="logo-badge">AI</span>
+      </div>
+      <nav className="sidebar-nav">
+        {navItems.map((item,i)=>
+          item.section
+          ? <div key={i} className="nav-label" style={{marginTop:8}}>{item.section}</div>
+          : <div key={item.id}
+              className={`nav-item${active===item.id?" active":""}`}
+              onClick={()=>{setActive(item.id);setSidebarOpen(false)}}>
+              <span className="nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+              {item.badge&&<span className={`nav-badge${item.badgeColor==="red"?" red":item.badgeColor==="green"?" green":""}`}>{item.badge}</span>}
+            </div>
+        )}
+      </nav>
+      <div className="sidebar-footer">
+        <div className="user-card">
+          <div className="user-avatar">DR</div>
+          <div className="user-info">
+            <div className="user-name">Dr. D. Ravi Kumar</div>
+            <div className="user-role">District Health Officer</div>
+          </div>
+          <span style={{color:"var(--text-muted)",fontSize:12}}>⋮</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TopBar({title,setSidebarOpen,setShowNotif,notifications}){
+  return(
+    <div className="topbar">
+      <button className="btn btn-ghost btn-icon" style={{display:"none"}} onClick={()=>setSidebarOpen(p=>!p)}>☰</button>
+      <div className="topbar-title">{title}</div>
+      <div className="topbar-actions">
+        <div className="ai-thinking">
+          <span>AI</span>
+          <span className="dot-blink">●</span>
+          <span className="dot-blink">●</span>
+          <span className="dot-blink">●</span>
+        </div>
+        <div className="status-pill status-live">● LIVE</div>
+        <button className="btn btn-ghost btn-icon" style={{position:"relative"}} onClick={()=>setShowNotif(p=>!p)}>
+          🔔
+          <span className="notif-dot"></span>
+        </button>
+        <button className="btn btn-primary btn-sm">
+          + New Meeting
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* DASHBOARD */
+function Dashboard({setActive}){
+  const stats=[
+    {icon:"📅",val:"128",label:"Total Meetings",delta:"+12 this month",dir:"up",variant:"amber"},
+    {icon:"⏺",val:"1",label:"Live Now",delta:"Vaccination Drive",dir:"up",variant:"cyan"},
+    {icon:"◈",val:"4",label:"Pending Actions",delta:"2 critical today",dir:"down",variant:"purple"},
+    {icon:"📊",val:"94%",label:"AI Accuracy",delta:"+2% improvement",dir:"up",variant:"green"},
+    {icon:"📝",val:"891",label:"Transcribed Hours",delta:"+24h this week",dir:"up",variant:"amber"},
+  ];
+  const [actions,setActions]=useState(ACTION_ITEMS);
+  const toggle=(id)=>setActions(a=>a.map(x=>x.id===id?{...x,done:!x.done}:x));
+
+  return(
+    <div>
+      {/* STATS */}
+      <div className="stats-grid">
+        {stats.map((s,i)=>(
+          <div key={i} className={`stat-card ${s.variant} animate-fade-up`} style={{animationDelay:i*0.06+"s"}}>
+            <div className="stat-icon">{s.icon}</div>
+            <div className="stat-value">{s.val}</div>
+            <div className="stat-label">{s.label}</div>
+            <div className={`stat-delta ${s.dir}`}>{s.dir==="up"?"↑":"↓"} {s.delta}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* LIVE MEETING BANNER */}
+      <div className="card glow-cyan animate-fade-up" style={{marginBottom:20,background:"linear-gradient(135deg,rgba(0,212,255,0.06),rgba(0,212,255,0.02))",borderColor:"rgba(0,212,255,0.25)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:14}}>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+              <span className="rec-indicator"><span className="rec-dot"></span>REC</span>
+              <span className="status-pill status-live">● LIVE</span>
+            </div>
+            <div style={{fontFamily:"var(--font-display)",fontSize:16,fontWeight:700}}>Vaccination Drive Coordination</div>
+            <div style={{fontSize:12,color:"var(--text-muted)",marginTop:4}}>Google Meet · Started 02:30 PM · 8 participants · 00:23:41 elapsed</div>
+          </div>
+          <div style={{display:"flex",gap:8,flexDirection:"column",alignItems:"flex-end"}}>
+            <div className="waveform">
+              {Array.from({length:16},(_,i)=>(
+                <div key={i} className="wave-bar" style={{animationDelay:i*0.07+"s",animationDuration:(0.6+Math.random()*0.6)+"s"}}></div>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button className="btn btn-ghost btn-sm" onClick={()=>setActive("live")}>View Live →</button>
+              <button className="btn btn-danger btn-sm">⏹ Stop</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid-2-1" style={{marginBottom:20}}>
+        {/* RECENT MEETINGS */}
+        <div className="card">
+          <div className="card-header">
+            <div>
+              <div className="card-title">Recent Meetings</div>
+              <div className="card-subtitle">Last 7 days activity</div>
+            </div>
+            <button className="btn btn-ghost btn-sm" onClick={()=>setActive("archive")}>View All →</button>
+          </div>
+          {MEETINGS_DATA.slice(0,4).map(m=>(
+            <div key={m.id} className="meeting-card" onClick={()=>setActive("summaries")}>
+              <div className={`meeting-platform platform-${m.platform}`}>
+                {m.platform==="zoom"?"Z":m.platform==="meet"?"G":m.platform==="teams"?"T":"W"}
+              </div>
+              <div className="meeting-info">
+                <div className="meeting-title">{m.title}</div>
+                <div className="meeting-meta">
+                  <span>📅 {m.date}</span>
+                  <span>⏰ {m.time}</span>
+                  <span>👥 {m.participants||"—"}</span>
+                </div>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:6}}>
+                <span className={`status-pill ${m.status==="live"?"status-live":m.status==="done"?"status-done":"status-pending"}`}>
+                  {m.status==="live"?"● Live":m.status==="done"?"✓ Done":"Upcoming"}
+                </span>
+                {m.actions>0&&<span className="action-tag tag-priority">{m.actions} actions</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* QUICK ACTIONS + DONUT */}
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <div className="card">
+            <div className="card-title" style={{marginBottom:14}}>Today's Agenda</div>
+            <div className="timeline-item">
+              <div className="timeline-dot tl-done"></div>
+              <div className="timeline-body">
+                <div className="timeline-title">District Health Review ✓</div>
+                <div className="timeline-time">10:00 AM – 11:24 AM</div>
+              </div>
+            </div>
+            <div className="timeline-item">
+              <div className="timeline-dot tl-active"></div>
+              <div className="timeline-body">
+                <div className="timeline-title">Vaccination Drive Coordination</div>
+                <div className="timeline-time">02:30 PM · LIVE NOW</div>
+                <div className="timeline-note">8 participants joined</div>
+              </div>
+            </div>
+            <div className="timeline-item">
+              <div className="timeline-dot tl-pending"></div>
+              <div className="timeline-body">
+                <div className="timeline-title">Evening Sync – ASHA Workers</div>
+                <div className="timeline-time">05:00 PM · Upcoming</div>
+              </div>
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-title" style={{marginBottom:14}}>Meeting Platforms</div>
+            <div className="donut-wrap">
+              <svg width="80" height="80" className="donut-svg">
+                <circle cx="40" cy="40" r="30" fill="none" stroke="var(--border)" strokeWidth="12"/>
+                <circle cx="40" cy="40" r="30" fill="none" stroke="var(--accent)" strokeWidth="12"
+                  strokeDasharray="75 113" strokeDashoffset="-28" strokeLinecap="round"/>
+                <circle cx="40" cy="40" r="30" fill="none" stroke="var(--cyan)" strokeWidth="12"
+                  strokeDasharray="40 148" strokeDashoffset="-103" strokeLinecap="round"/>
+                <circle cx="40" cy="40" r="30" fill="none" stroke="var(--purple)" strokeWidth="12"
+                  strokeDasharray="25 163" strokeDashoffset="-143" strokeLinecap="round"/>
+                <text x="40" y="45" textAnchor="middle" fill="var(--text-primary)" fontSize="13" fontWeight="700" fontFamily="Syne">128</text>
+              </svg>
+              <div className="donut-legend">
+                {[["var(--accent)","Zoom","40%"],["var(--cyan)","Google Meet","24%"],["var(--purple)","Teams","21%"],["var(--green)","WebEx","15%"]].map(([c,l,p])=>(
+                  <div key={l} className="legend-item"><div className="legend-dot" style={{background:c}}></div><span>{l}</span><span style={{marginLeft:"auto",color:"var(--text-primary)",fontWeight:600}}>{p}</span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* PENDING ACTIONS */}
+      <div className="card animate-fade-up anim-d3">
+        <div className="card-header">
+          <div>
+            <div className="card-title">Critical Action Items</div>
+            <div className="card-subtitle">Assigned from AI-generated MoM</div>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={()=>setActive("actions")}>All Actions →</button>
+        </div>
+        {actions.filter(a=>!a.done).slice(0,3).map(a=>(
+          <div key={a.id} className="action-item">
+            <div className={`action-checkbox${a.done?" checked":""}`} onClick={()=>toggle(a.id)}>{a.done?"✓":""}</div>
+            <div className="action-details">
+              <div className="action-task" style={a.done?{textDecoration:"line-through",opacity:0.5}:{}}>{a.task}</div>
+              <div className="action-meta">
+                <span className="action-tag tag-officer">👤 {a.officer}</span>
+                <span className="action-tag tag-deadline">⏰ {a.deadline}</span>
+                <span className={`action-tag ${a.priority==="Critical"?"tag-deadline":"tag-priority"}`}>{a.priority}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* NEW MEETING */
+function NewMeeting({setActive}){
+  const [platform,setPlatform]=useState("zoom");
+  const [link,setLink]=useState("");
+  const [joinMode,setJoinMode]=useState("link");
+  const [loading,setLoading]=useState(false);
+  const [joined,setJoined]=useState(false);
+  const platforms=[
+    {id:"zoom",label:"Zoom",emoji:"Z"},
+    {id:"meet",label:"Google Meet",emoji:"G"},
+    {id:"teams",label:"Teams",emoji:"T"},
+    {id:"webex",label:"WebEx",emoji:"W"},
+  ];
+  const handleJoin=()=>{
+    setLoading(true);
+    setTimeout(()=>{setLoading(false);setJoined(true)},2200);
+  };
+  if(joined) return(
+    <div className="card animate-fade-up" style={{maxWidth:560,margin:"40px auto",textAlign:"center",padding:40}}>
+      <div style={{fontSize:48,marginBottom:16}}>🤖</div>
+      <div style={{fontFamily:"var(--font-display)",fontSize:22,fontWeight:800,marginBottom:8}}>MeetIQ Recorder Joined!</div>
+      <div style={{color:"var(--text-secondary)",marginBottom:24}}>The AI bot is now live in your meeting — recording, transcribing, and monitoring participants.</div>
+      <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+        <div className="status-pill status-live">● Bot Active</div>
+        <div className="status-pill status-done">🎙 Recording</div>
+        <div className="status-pill status-done">📝 Transcribing</div>
+      </div>
+      <div className="divider"/>
+      <button className="btn btn-primary" onClick={()=>setActive("live")}>View Live Session →</button>
+    </div>
+  );
+  return(
+    <div style={{maxWidth:640,margin:"0 auto"}}>
+      <div className="card animate-fade-up">
+        <div className="card-header">
+          <div>
+            <div className="card-title">🤖 Launch AI Meeting Bot</div>
+            <div className="card-subtitle">MeetIQ Recorder will join as a silent AI participant</div>
+          </div>
+        </div>
+
+        {/* PLATFORM */}
+        <div className="form-label">Select Platform</div>
+        <div className="platform-chips">
+          {platforms.map(p=>(
+            <div key={p.id} className={`platform-chip${platform===p.id?" selected":""}`} onClick={()=>setPlatform(p.id)}>
+              <span style={{fontWeight:800}}>{p.emoji}</span>{p.label}
+            </div>
+          ))}
+        </div>
+
+        {/* JOIN MODE */}
+        <div style={{display:"flex",gap:8,marginBottom:16}}>
+          {[["link","Meeting Link"],["credentials","Credentials"]].map(([v,l])=>(
+            <button key={v} className={`btn${joinMode===v?" btn-primary":" btn-ghost"}`} onClick={()=>setJoinMode(v)}>{l}</button>
+          ))}
+        </div>
+
+        {joinMode==="link"?(
+          <div className="form-group">
+            <label className="form-label">Meeting Link / URL</label>
+            <div className="input-with-icon">
+              <span className="input-icon">🔗</span>
+              <input className="form-input" placeholder={`Paste your ${platforms.find(p=>p.id===platform)?.label} link here...`}
+                value={link} onChange={e=>setLink(e.target.value)}/>
+            </div>
+          </div>
+        ):(
+          <div className="grid-2">
+            <div className="form-group"><label className="form-label">Meeting ID</label><input className="form-input" placeholder="123-456-7890"/></div>
+            <div className="form-group"><label className="form-label">Passcode</label><input className="form-input" type="password" placeholder="••••••"/></div>
+            <div className="form-group"><label className="form-label">Username</label><input className="form-input" placeholder="Your display name"/></div>
+            <div className="form-group"><label className="form-label">Email</label><input className="form-input" placeholder="your@email.com"/></div>
+          </div>
+        )}
+
+        <div className="divider-text">AI Bot Configuration</div>
+
+        <div className="grid-2">
+          <div>
+            <div className="form-group">
+              <label className="form-label">Bot Display Name</label>
+              <input className="form-input" defaultValue="MeetIQ Recorder"/>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Transcription Language</label>
+              <select className="form-select">
+                <option>English + Telugu (Auto-detect)</option>
+                <option>English Only</option>
+                <option>Telugu Only</option>
+                <option>Hindi + English</option>
+              </select>
+            </div>
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {[["Record Audio","on"],["Transcribe Speech","on"],["Capture Screens","on"],["Speaker Detection","on"],["Auto-Generate MoM","on"],["WhatsApp Summary","off"]].map(([l,d])=>(
+              <ToggleRow key={l} label={l} defaultOn={d==="on"}/>
+            ))}
+          </div>
+        </div>
+
+        <div className="divider"/>
+        <button className="btn btn-primary" style={{width:"100%",padding:"12px",fontSize:14,justifyContent:"center"}}
+          onClick={handleJoin} disabled={loading}>
+          {loading?<><span className="spinner"></span> Connecting MeetIQ Bot…</>:"🤖 Launch AI Bot & Join Meeting"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ToggleRow({label,defaultOn=true}){
+  const [on,setOn]=useState(defaultOn);
+  return(
+    <div className="toggle-wrap">
+      <div className={`toggle${on?" on":""}`} onClick={()=>setOn(p=>!p)}></div>
+      <span className="toggle-label">{label}</span>
+    </div>
+  );
+}
+
+/* LIVE SESSION */
+function LiveSession(){
+  const [elapsed,setElapsed]=useState(1421);
+  useEffect(()=>{const t=setInterval(()=>setElapsed(p=>p+1),1000);return()=>clearInterval(t)},[]);
+  const fmt=s=>`${String(Math.floor(s/3600)).padStart(2,"0")}:${String(Math.floor((s%3600)/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  const [lines,setLines]=useState(TRANSCRIPT_DATA.slice(0,3));
+  useEffect(()=>{
+    let idx=3;
+    const t=setInterval(()=>{
+      if(idx<TRANSCRIPT_DATA.length){setLines(p=>[...p,TRANSCRIPT_DATA[idx]]);idx++;}
+    },3500);
+    return()=>clearInterval(t);
+  },[]);
+
+  return(
+    <div>
+      {/* LIVE HEADER */}
+      <div className="card glow-cyan animate-fade-up" style={{background:"linear-gradient(135deg,rgba(0,212,255,0.05),rgba(0,0,0,0))",borderColor:"rgba(0,212,255,0.3)",marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span className="rec-indicator"><span className="rec-dot"></span>RECORDING</span>
+              <span className="status-pill status-live">● LIVE</span>
+              <span style={{fontFamily:"var(--font-mono)",fontSize:13,color:"var(--accent)"}}>{fmt(elapsed)}</span>
+            </div>
+            <div style={{fontFamily:"var(--font-display)",fontSize:18,fontWeight:700}}>Vaccination Drive Coordination</div>
+            <div style={{fontSize:12,color:"var(--text-muted)",marginTop:4}}>Google Meet · 8 participants · Bot: MeetIQ Recorder</div>
+          </div>
+          <div className="waveform" style={{height:48}}>
+            {Array.from({length:20},(_,i)=>(
+              <div key={i} className="wave-bar" style={{animationDelay:i*0.05+"s",animationDuration:(0.5+Math.random()*0.8)+"s"}}></div>
+            ))}
+          </div>
+          <div style={{display:"flex",gap:8}}>
+            <button className="btn btn-ghost btn-sm">⏸ Pause</button>
+            <button className="btn btn-danger btn-sm">⏹ End Session</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid-2-1">
+        {/* LIVE TRANSCRIPT */}
+        <div className="card animate-fade-up anim-d1">
+          <div className="card-header">
+            <div>
+              <div className="card-title">📝 Live Transcript</div>
+              <div className="card-subtitle">AI Whisper · Speaker Diarization Active</div>
+            </div>
+            <div style={{display:"flex",gap:6}}>
+              <span className="lang-badge lang-en">EN</span>
+              <span className="lang-badge lang-te">తె</span>
+            </div>
+          </div>
+          <div style={{maxHeight:480,overflowY:"auto"}}>
+            {lines.map((l,i)=>(
+              <div key={i} className="transcript-line" style={{animation:i===lines.length-1?"fadeInUp .4s ease":"none"}}>
+                <div>
+                  <div className="transcript-time">{l.time}</div>
+                  <span className={`lang-badge ${l.lang==="te"?"lang-te":"lang-en"}`}>{l.lang==="te"?"తె":"EN"}</span>
+                </div>
+                <div>
+                  <div className="transcript-speaker">{l.speaker}</div>
+                  <div className={`transcript-text${l.lang==="te"?" telugu":""}`}>{l.text}</div>
+                </div>
+              </div>
+            ))}
+            <div className="ai-thinking" style={{padding:"12px 0"}}>
+              <span>Listening</span>
+              <span className="dot-blink" style={{fontSize:18,lineHeight:1}}>●</span>
+              <span className="dot-blink" style={{fontSize:18,lineHeight:1}}>●</span>
+              <span className="dot-blink" style={{fontSize:18,lineHeight:1}}>●</span>
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT PANEL */}
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          {/* PARTICIPANTS */}
+          <div className="card animate-fade-up anim-d2">
+            <div className="card-title" style={{marginBottom:12}}>👥 Participants (8)</div>
+            {["DIO Mrs. Lakshmi","DMHO Dr. Rao","Field Officer Ravi","CHO Sunitha","Store Manager","Dr. Prasad","Nurse Kavitha","🤖 MeetIQ Recorder"].map((p,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:"1px solid rgba(30,45,74,0.4)"}}>
+                <div style={{width:24,height:24,borderRadius:"50%",background:i===7?"linear-gradient(135deg,var(--accent),#e8891a)":"linear-gradient(135deg,hsl("+(i*40)+",60%,50%),hsl("+(i*40+30)+",60%,40%))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:700,flexShrink:0}}>
+                  {i===7?"🤖":p[0]}
+                </div>
+                <span style={{fontSize:11,flex:1,color:i===7?"var(--accent)":"var(--text-primary)"}}>{p}</span>
+                {i<7&&<div className="waveform" style={{height:14}}>
+                  {i%3===0&&Array.from({length:5},(_,j)=>(
+                    <div key={j} className="wave-bar" style={{animationDelay:j*0.1+"s"}}></div>
+                  ))}
+                </div>}
+                {i===7&&<span className="status-pill status-live" style={{fontSize:8}}>● BOT</span>}
+              </div>
+            ))}
+          </div>
+
+          {/* AI INSIGHTS */}
+          <div className="card animate-fade-up anim-d3">
+            <div className="card-title" style={{marginBottom:12}}>⚡ AI Live Insights</div>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {[
+                {icon:"🎯",text:"Key topic: Vaccination coverage",color:"var(--cyan)"},
+                {icon:"⚠️",text:"Action detected: Camp arrangement by DIO",color:"var(--accent)"},
+                {icon:"📍",text:"Locations mentioned: Vikarabad, Medchal",color:"var(--green)"},
+                {icon:"📅",text:"Deadline detected: May 20, 2026",color:"var(--red)"},
+              ].map((ins,i)=>(
+                <div key={i} style={{display:"flex",gap:8,padding:"7px 10px",background:"var(--bg-elevated)",borderRadius:"var(--radius-sm)",border:"1px solid var(--border)"}}>
+                  <span>{ins.icon}</span>
+                  <span style={{fontSize:11,color:ins.color}}>{ins.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* SUMMARIES */
+function Summaries(){
+  const [tab,setTab]=useState("brief");
+  const [lang,setLang]=useState("en");
+
+  const summaryEn={
+    brief:"The District Health Review meeting focused on Q2 vaccination coverage. Key gaps identified in rural areas (42% coverage vs 68% urban). Cold chain failures in 3 mandals. Special vaccination camps ordered for Vikarabad and Medchal by May 20th. Target: 85% district-wide coverage by month end.",
+    detailed:`The meeting was chaired by DMHO Dr. D. Ravi Kumar and attended by 12 department heads. The primary agenda was Q2 vaccination performance review.\n\n**Urban Coverage:** DIO Mrs. Lakshmi reported 68% achievement in urban zones, meeting the 65% interim target.\n\n**Rural Gaps:** Only 42% coverage in rural mandals. Major bottleneck identified as cold chain failure in Vikarabad, Medchal, and Tandur mandals. Emergency repair has been sanctioned.\n\n**Action Plan:** Special vaccination camps to be held 18–22 May in all rural mandals. ASHA workers to conduct door-to-door outreach. Additional 5000 vaccine vials to be procured urgently.\n\n**Next Review:** June 1, 2026 at 10:00 AM. All officers to submit progress reports by May 28.`,
+    decisions:["Target of 85% district-wide vaccination by May 31, 2026","Emergency repair of cold chain units sanctioned immediately","Special camps in Vikarabad and Medchal by May 20","Procurement of 5000 additional vaccine vials approved"],
+  };
+
+  const summaryTe={
+    brief:"జిల్లా ఆరోగ్య సమీక్ష సమావేశంలో Q2 టీకాల కవరేజ్ పై చర్చించారు. గ్రామీణ ప్రాంతాల్లో కేవలం 42% కవరేజ్ మాత్రమే సాధించారు. మూడు మండలాల్లో కోల్డ్ చెయిన్ వైఫల్యాలు నమోదయ్యాయి. వికారాబాద్ మరియు మేడ్చల్ లో మే 20 నాటికి ప్రత్యేక శిబిరాలు నిర్వహించాలని నిర్ణయించారు.",
+    detailed:"",decisions:[],
+  };
+
+  const summary=lang==="en"?summaryEn:summaryTe;
+
+  return(
+    <div>
+      {/* MEETING SELECTOR */}
+      <div className="card animate-fade-up" style={{marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+          <div style={{flex:1}}>
+            <div style={{fontFamily:"var(--font-display)",fontSize:16,fontWeight:700}}>District Health Review – Q2 2026</div>
+            <div style={{fontSize:11,color:"var(--text-muted)",marginTop:3}}>May 13, 2026 · 10:00 AM · 12 participants · 1h 24m</div>
+          </div>
+          <div style={{display:"flex",gap:8,alignItems:"center"}}>
+            <span className="status-pill status-done">✓ AI Summary Ready</span>
+            <button className={`btn btn-sm${lang==="en"?" btn-primary":" btn-ghost"}`} onClick={()=>setLang("en")}>🇬🇧 English</button>
+            <button className={`btn btn-sm${lang==="te"?" btn-primary":" btn-ghost"}`} onClick={()=>setLang("te")}>🇮🇳 Telugu</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid-2-1">
+        <div>
+          <div className="tabs">
+            {[["brief","Brief Summary"],["detailed","Detailed"],["decisions","Key Decisions"],["telugu","Telugu MoM"]].map(([v,l])=>(
+              <div key={v} className={`tab${tab===v?" active":""}`} onClick={()=>setTab(v)}>{l}</div>
+            ))}
+          </div>
+
+          <div className="card animate-fade-up">
+            {tab==="brief"&&(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                  <div className="card-title">Executive Summary</div>
+                  <span className="lang-badge lang-en">EN</span>
+                </div>
+                <p style={{fontSize:14,lineHeight:1.8,color:"var(--text-primary)"}}>{summaryEn.brief}</p>
+              </div>
+            )}
+            {tab==="detailed"&&(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                  <div className="card-title">Detailed Summary</div>
+                  <span className="lang-badge lang-en">EN</span>
+                </div>
+                {summaryEn.detailed.split("\n\n").map((p,i)=>(
+                  <p key={i} style={{fontSize:13,lineHeight:1.8,color:"var(--text-primary)",marginBottom:12}}
+                    dangerouslySetInnerHTML={{__html:p.replace(/\*\*(.*?)\*\*/g,"<strong style='color:var(--accent)'>$1</strong>")}}/>
+                ))}
+              </div>
+            )}
+            {tab==="decisions"&&(
+              <div>
+                <div className="card-title" style={{marginBottom:12}}>Key Decisions Taken</div>
+                {summaryEn.decisions.map((d,i)=>(
+                  <div key={i} style={{display:"flex",gap:10,padding:"10px 0",borderBottom:"1px solid var(--border)"}}>
+                    <span style={{color:"var(--accent)",fontWeight:700,fontFamily:"var(--font-mono)",fontSize:12}}>D{i+1}</span>
+                    <span style={{fontSize:13}}>{d}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {tab==="telugu"&&(
+              <div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+                  <div className="card-title">తెలుగు సారాంశం</div>
+                  <span className="lang-badge lang-te">తె</span>
+                </div>
+                <p style={{fontSize:15,lineHeight:2,color:"var(--text-primary)"}}>{summaryTe.brief}</p>
+                <div className="divider"/>
+                <div style={{background:"var(--bg-elevated)",padding:"12px",borderRadius:"var(--radius-sm)",border:"1px solid var(--border)"}}>
+                  <div style={{fontSize:11,color:"var(--text-muted)",marginBottom:8}}>తీర్మానాలు (Decisions)</div>
+                  <div style={{fontSize:13,lineHeight:2}}>
+                    ✦ మే 31 నాటికి జిల్లా వ్యాప్తంగా 85% టీకాల లక్ష్యం సాధించాలి<br/>
+                    ✦ కోల్డ్ చెయిన్ యూనిట్ల అత్యవసర మరమ్మతు మంజూరు<br/>
+                    ✦ 5000 అదనపు వ్యాక్సిన్ వయల్స్ కొనుగోలు ఆమోదం
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          {/* EXPORT */}
+          <div className="card animate-fade-up anim-d1">
+            <div className="card-title" style={{marginBottom:12}}>📤 Export Report</div>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {[["📄 PDF Report","Full MoM + Summary"],["📝 Word Document","Editable DOCX"],["📊 PowerPoint","Slides with Notes"],["📧 Email Summary","Send to participants"],["💬 WhatsApp","Share instantly"]].map(([l,s])=>(
+                <button key={l} className="btn btn-ghost" style={{justifyContent:"flex-start",gap:8}}>
+                  <span>{l}</span>
+                  <span style={{fontSize:10,color:"var(--text-muted)",marginLeft:"auto"}}>{s}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* AI QUALITY */}
+          <div className="card animate-fade-up anim-d2">
+            <div className="card-title" style={{marginBottom:12}}>🎯 AI Quality Score</div>
+            {[["Transcription Accuracy","97%",97],["Summary Coverage","94%",94],["Action Detection","91%",91],["Telugu Quality","88%",88]].map(([l,v,p])=>(
+              <div key={l} style={{marginBottom:12}}>
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}}>
+                  <span style={{color:"var(--text-secondary)"}}>{l}</span>
+                  <span style={{color:"var(--accent)",fontWeight:700}}>{v}</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{width:v,background:`linear-gradient(90deg,var(--accent),var(--cyan))`}}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* MINUTES OF MEETING */
+function MoM(){
+  const [exporting,setExporting]=useState(false);
+  const doExport=()=>{setExporting(true);setTimeout(()=>setExporting(false),1800)};
+  return(
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20,flexWrap:"wrap",gap:12}}>
+        <div>
+          <div style={{fontFamily:"var(--font-display)",fontSize:18,fontWeight:700}}>Minutes of Meeting</div>
+          <div style={{fontSize:12,color:"var(--text-muted)"}}>AI-generated · Government Format · Auto-structured</div>
+        </div>
+        <div className="export-row">
+          <button className="btn btn-ghost btn-sm" onClick={doExport}>{exporting?<><span className="spinner"></span> Generating…</>:"📄 PDF"}</button>
+          <button className="btn btn-ghost btn-sm">📝 DOCX</button>
+          <button className="btn btn-ghost btn-sm">📊 PPTX</button>
+          <button className="btn btn-primary btn-sm">📧 Send to All</button>
+        </div>
+      </div>
+
+      <div className="card animate-fade-up" style={{maxWidth:760,margin:"0 auto"}}>
+        {/* MOM HEADER */}
+        <div style={{textAlign:"center",padding:"20px 0 24px",borderBottom:"2px solid var(--accent)"}}>
+          <div style={{fontSize:12,color:"var(--text-muted)",letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Government of Telangana</div>
+          <div style={{fontFamily:"var(--font-display)",fontSize:20,fontWeight:800,marginBottom:4}}>MINUTES OF MEETING</div>
+          <div style={{fontFamily:"var(--font-display)",fontSize:16,fontWeight:600,color:"var(--accent)"}}>District Health Review – Q2 2026</div>
+        </div>
+
+        {/* META */}
+        <div className="grid-2" style={{padding:"16px 0",borderBottom:"1px solid var(--border)"}}>
+          {[["Date","May 13, 2026 (Tuesday)"],["Time","10:00 AM – 11:24 AM"],["Venue","DMHO Conference Hall, Vikarabad"],["Meeting ID","VZM-2026-0513-DHR"],["Chaired By","Dr. D. Ravi Kumar, DMHO"],["Recorded By","MeetIQ AI Bot (Auto)"]].map(([k,v])=>(
+            <div key={k} style={{padding:"6px 0"}}>
+              <span style={{fontSize:10,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:1,fontWeight:700}}>{k}: </span>
+              <span style={{fontSize:13}}>{v}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* PARTICIPANTS */}
+        <MoMSection num="1" title="Participants">
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Department</th><th>Attendance</th></tr></thead>
+              <tbody>
+                {[["1","Dr. D. Ravi Kumar","DMHO","District Health","Present"],
+                  ["2","Mrs. G. Lakshmi","District Immunisation Officer","Public Health","Present"],
+                  ["3","Mr. R. Venkat","Field Officer","Surveillance","Present"],
+                  ["4","Mrs. S. Devi","Community Health Officer","ASHA","Present"],
+                  ["5","Mr. P. Kumar","Store Manager","Procurement","Present"],
+                  ["6","Dr. K. Prasad","Medical Officer","PHC Head","Present"],
+                ].map(r=>(
+                  <tr key={r[0]}><td style={{color:"var(--text-muted)"}}>{r[0]}</td><td style={{fontWeight:500}}>{r[1]}</td><td>{r[2]}</td><td>{r[3]}</td><td><span className="status-pill status-live">{r[4]}</span></td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </MoMSection>
+
+        <MoMSection num="2" title="Agenda Items">
+          {["Review of Q2 vaccination coverage statistics","Analysis of cold chain infrastructure issues","Discussion of rural coverage gaps","Action plan for achieving 85% target","Resource allocation and procurement","Next steps and deadline assignment"].map((a,i)=>(
+            <div key={i} style={{display:"flex",gap:10,padding:"6px 0"}}>
+              <span style={{color:"var(--accent)",fontWeight:700,fontSize:12,fontFamily:"var(--font-mono)",flexShrink:0}}>{i+1}.</span>
+              <span style={{fontSize:13}}>{a}</span>
+            </div>
+          ))}
+        </MoMSection>
+
+        <MoMSection num="3" title="Discussion Points">
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            {[
+              {topic:"Vaccination Coverage",disc:"DIO Mrs. Lakshmi presented Q2 data showing 68% urban and 42% rural coverage. The rural gap was attributed to cold chain failures and logistical challenges in remote mandals. DMHO emphasized urgency."},
+              {topic:"Cold Chain Failures",disc:"Field Officer Ravi reported cold chain failures in Vikarabad, Medchal, and Tandur mandals affecting 12,000 vaccine doses. Emergency repair sanctioned by DMHO. Deadline: May 16."},
+              {topic:"Special Vaccination Camps",disc:"DIO proposed holding special camps in 8 rural mandals from May 18–22. ASHA workers to conduct door-to-door campaign. Target: cover 15,000 beneficiaries."},
+            ].map((d,i)=>(
+              <div key={i} style={{padding:"12px",background:"var(--bg-elevated)",borderRadius:"var(--radius-sm)",borderLeft:"3px solid var(--accent)"}}>
+                <div style={{fontWeight:700,fontSize:12,color:"var(--accent)",marginBottom:6}}>{d.topic}</div>
+                <div style={{fontSize:13,lineHeight:1.7}}>{d.disc}</div>
+              </div>
+            ))}
+          </div>
+        </MoMSection>
+
+        <MoMSection num="4" title="Decisions Taken">
+          {["District target of 85% vaccination coverage to be achieved by May 31, 2026",
+            "Emergency repair of cold chain units in 3 mandals sanctioned – Rs. 80,000",
+            "Special vaccination camps approved for May 18–22 in all rural mandals",
+            "Procurement of 5,000 additional vaccine vials approved – Rs. 2,40,000",
+            "Progress report to be submitted by all officers by May 28, 2026"
+          ].map((d,i)=>(
+            <div key={i} style={{display:"flex",gap:10,padding:"8px 0",borderBottom:"1px solid var(--border)"}}>
+              <span style={{color:"var(--green)",fontWeight:700,fontSize:14,flexShrink:0}}>✓</span>
+              <span style={{fontSize:13}}>{d}</span>
+            </div>
+          ))}
+        </MoMSection>
+
+        <MoMSection num="5" title="Action Items &amp; Deadlines">
+          <div className="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Action</th><th>Responsible Officer</th><th>Deadline</th><th>Priority</th></tr></thead>
+              <tbody>
+                {ACTION_ITEMS.map((a,i)=>(
+                  <tr key={a.id}>
+                    <td style={{color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>{i+1}</td>
+                    <td style={{fontSize:12}}>{a.task}</td>
+                    <td style={{fontSize:11,color:"var(--text-secondary)"}}>{a.officer}</td>
+                    <td><span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"var(--red)"}}>{a.deadline}</span></td>
+                    <td><span className={`action-tag ${a.priority==="Critical"?"tag-deadline":"tag-priority"}`}>{a.priority}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </MoMSection>
+
+        <div style={{padding:"20px 0 4px",borderTop:"2px solid var(--border)",display:"flex",justifyContent:"space-between",fontSize:11,color:"var(--text-muted)"}}>
+          <span>Auto-generated by MeetIQ AI · May 13, 2026</span>
+          <span>CONFIDENTIAL – DISTRICT USE ONLY</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MoMSection({num,title,children}){
+  return(
+    <div style={{padding:"16px 0",borderBottom:"1px solid var(--border)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <span style={{width:22,height:22,background:"var(--accent)",color:"#000",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,flexShrink:0}}>{num}</span>
+        <span style={{fontFamily:"var(--font-display)",fontSize:14,fontWeight:700,textTransform:"uppercase",letterSpacing:0.5}}>{title}</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* SLIDES */
+function SlideCaptures(){
+  const [selected,setSelected]=useState(null);
+  return(
+    <div>
+      <div className="card animate-fade-up" style={{marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+          <span style={{fontFamily:"var(--font-display)",fontWeight:700}}>District Health Review – Q2 2026</span>
+          <span className="status-pill status-done">6 Slides Captured</span>
+          <span className="status-pill status-done">OCR Complete</span>
+          <button className="btn btn-ghost btn-sm" style={{marginLeft:"auto"}}>📥 Download All</button>
+        </div>
+      </div>
+      <div className="grid-3">
+        {SLIDES_DATA.map(s=>(
+          <div key={s.id} className="slide-item animate-fade-up" style={{animationDelay:s.id*0.06+"s"}} onClick={()=>setSelected(s)}>
+            <div className="slide-preview">
+              <span style={{fontSize:36,position:"relative",zIndex:1}}>{s.emoji}</span>
+              <span className="slide-num">#{String(s.id).padStart(2,"0")}</span>
+              <span className="slide-label">{s.title}</span>
+            </div>
+            <div className="slide-info">
+              <div className="slide-title-text">{s.title}</div>
+              <div className="slide-disc">{s.discussion.slice(0,60)}…</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {selected&&(
+        <div className="modal-overlay" onClick={()=>setSelected(null)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-title">Slide #{String(selected.id).padStart(2,"0")} – {selected.title}</div>
+              <button className="modal-close" onClick={()=>setSelected(null)}>✕</button>
+            </div>
+            <div style={{aspectRatio:"16/9",background:"linear-gradient(135deg,#1a2540,#0d1528)",borderRadius:"var(--radius-sm)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:60,marginBottom:16,border:"1px solid var(--border)"}}>
+              {selected.emoji}
+            </div>
+            <div style={{fontFamily:"var(--font-display)",fontWeight:700,marginBottom:8}}>{selected.title}</div>
+            <div className="form-label">Discussion Notes (OCR + AI)</div>
+            <div style={{background:"var(--bg-elevated)",padding:12,borderRadius:"var(--radius-sm)",border:"1px solid var(--border)",fontSize:13,lineHeight:1.7,color:"var(--text-secondary)"}}>
+              {selected.discussion}
+            </div>
+            <div className="divider"/>
+            <div style={{display:"flex",gap:8}}>
+              <button className="btn btn-primary btn-sm">📋 Copy Notes</button>
+              <button className="btn btn-ghost btn-sm">📄 Export</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ARCHIVE */
+function Archive(){
+  const [search,setSearch]=useState("");
+  const filtered=MEETINGS_DATA.filter(m=>m.title.toLowerCase().includes(search.toLowerCase())||!search);
+  return(
+    <div>
+      <div className="card animate-fade-up" style={{marginBottom:20}}>
+        <div className="grid-3" style={{gap:12}}>
+          <div>
+            <div className="search-bar">
+              <span style={{fontSize:16,color:"var(--text-muted)"}}>🔍</span>
+              <input placeholder="Search by keyword, officer, or topic…" value={search} onChange={e=>setSearch(e.target.value)}/>
+            </div>
+          </div>
+          <select className="form-select"><option>All Platforms</option><option>Zoom</option><option>Google Meet</option><option>Teams</option><option>WebEx</option></select>
+          <select className="form-select"><option>All Status</option><option>Completed</option><option>Live</option><option>Upcoming</option></select>
+        </div>
+      </div>
+      <div className="card animate-fade-up anim-d1">
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Meeting</th><th>Platform</th><th>Date & Time</th><th>Duration</th><th>Participants</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(m=>(
+                <tr key={m.id}>
+                  <td>
+                    <div style={{fontWeight:600,fontSize:12}}>{m.title}</div>
+                    <div style={{display:"flex",gap:4,marginTop:3}}>
+                      {m.summary&&<span className="lang-badge lang-en">EN</span>}
+                      {m.telugu&&<span className="lang-badge lang-te">తె</span>}
+                    </div>
+                  </td>
+                  <td><span style={{fontWeight:700,fontSize:11,textTransform:"uppercase",color:"var(--text-secondary)"}}>{m.platform}</span></td>
+                  <td><span style={{fontFamily:"var(--font-mono)",fontSize:11}}>{m.date}</span><br/><span style={{fontSize:10,color:"var(--text-muted)"}}>{m.time}</span></td>
+                  <td><span style={{fontFamily:"var(--font-mono)",fontSize:11,color:"var(--cyan)"}}>{m.duration}</span></td>
+                  <td><span style={{fontFamily:"var(--font-mono)",fontSize:12}}>{m.participants||"—"}</span></td>
+                  <td><span className={`status-pill ${m.status==="live"?"status-live":m.status==="done"?"status-done":"status-pending"}`}>
+                    {m.status==="live"?"● Live":m.status==="done"?"✓ Done":"Upcoming"}
+                  </span></td>
+                  <td>
+                    <div style={{display:"flex",gap:4}}>
+                      <button className="btn btn-ghost btn-sm">📝 Summary</button>
+                      <button className="btn btn-ghost btn-sm">📄 PDF</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ACTIONS */
+function ActionItems(){
+  const [actions,setActions]=useState(ACTION_ITEMS);
+  const [filter,setFilter]=useState("all");
+  const toggle=(id)=>setActions(a=>a.map(x=>x.id===id?{...x,done:!x.done}:x));
+  const filtered=filter==="all"?actions:filter==="pending"?actions.filter(a=>!a.done):actions.filter(a=>a.done);
+  return(
+    <div>
+      <div className="card animate-fade-up" style={{marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+          {[["all","All"],["pending","Pending"],["done","Completed"]].map(([v,l])=>(
+            <button key={v} className={`btn btn-sm${filter===v?" btn-primary":" btn-ghost"}`} onClick={()=>setFilter(v)}>{l}</button>
+          ))}
+          <span style={{marginLeft:"auto",fontSize:12,color:"var(--text-muted)"}}>{actions.filter(a=>!a.done).length} pending · {actions.filter(a=>a.done).length} done</span>
+        </div>
+      </div>
+      <div className="card animate-fade-up anim-d1">
+        <div className="card-header">
+          <div>
+            <div className="card-title">Action Items Tracker</div>
+            <div className="card-subtitle">AI-extracted from all meetings · Assigned to officers</div>
+          </div>
+          <button className="btn btn-ghost btn-sm">📥 Export</button>
+        </div>
+        {filtered.map(a=>(
+          <div key={a.id} className="action-item">
+            <div className={`action-checkbox${a.done?" checked":""}`} onClick={()=>toggle(a.id)}>{a.done?"✓":""}</div>
+            <div className="action-details">
+              <div className="action-task" style={a.done?{textDecoration:"line-through",opacity:0.5}:{}}>{a.task}</div>
+              <div className="action-meta">
+                <span className="action-tag tag-officer">👤 {a.officer}</span>
+                <span className="action-tag tag-deadline">⏰ {a.deadline}</span>
+                <span className="action-tag tag-dept">🏢 {a.dept}</span>
+                <span className={`action-tag ${a.priority==="Critical"?"tag-deadline":"tag-priority"}`}>{a.priority}</span>
+              </div>
+            </div>
+            <button className="btn btn-ghost btn-sm">Send Reminder</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* AI CHAT */
+function AIChat(){
+  const [msgs,setMsgs]=useState(CHAT_INIT);
+  const [input,setInput]=useState("");
+  const [typing,setTyping]=useState(false);
+  const endRef=useRef(null);
+  useEffect(()=>endRef.current?.scrollIntoView({behavior:"smooth"}),[msgs,typing]);
+
+  const aiResponses={
+    "summarize":
+      "**Today's Meeting Summary:**\n\nThe Vaccination Drive Coordination meeting (ongoing) covers rural immunization gaps. Key discussion: special camps in Vikarabad by May 20, cold chain repair deadline May 16.\n\nFor detailed summary → go to **AI Summaries** section.",
+    "pending":
+      "**4 Pending Action Items:**\n\n1. 🔴 Fix cold chain failures — Field Officer Ravi — Due: **May 16**\n2. 🔴 Procure 5000 vaccine vials — Store Manager — Due: **May 17**\n3. 🟠 Vaccination camps in Vikarabad — DIO Mrs. Lakshmi — Due: **May 20**\n4. 🟡 ASHA door-to-door campaign — CHO Sunitha — Due: **May 22**",
+    "telugu":
+      "**తెలుగు అనువాదం సిద్ధంగా ఉంది:**\n\nవ్యాక్సినేషన్ డ్రైవ్ సమన్వయ సమావేశంలో గ్రామీణ ప్రాంతాల్లో టీకాల కవరేజ్ పై చర్చించారు. వికారాబాద్ మరియు మేడ్చల్ లో మే 20 నాటికి ప్రత్యేక శిబిరాలు నిర్వహించాలి.",
+    "pdf":
+      "📄 **PDF Generation Started…**\n\nYour MoM PDF includes:\n• Meeting header & meta\n• Full participant list\n• Discussion notes (EN + Telugu)\n• All 5 action items with deadlines\n• Government format with seal\n\nDownload will be ready in ~15 seconds.",
+    "default":
+      "I can help you with:\n• **Summarize** today's meeting\n• **Pending** tasks list\n• **Telugu** translation\n• **PDF** report generation\n• **Search** past meetings by topic\n\nTry asking: \"Show dengue meetings from April\"",
+  };
+
+  const send=()=>{
+    if(!input.trim())return;
+    const q=input.toLowerCase();
+    setMsgs(m=>[...m,{role:"user",text:input}]);
+    setInput("");setTyping(true);
+    setTimeout(()=>{
+      const key=Object.keys(aiResponses).find(k=>q.includes(k))||"default";
+      setMsgs(m=>[...m,{role:"ai",text:aiResponses[key]}]);
+      setTyping(false);
+    },1200);
+  };
+
+  const formatMsg=(text)=>text.split("\n").map((l,i)=>(
+    <span key={i}>{l.replace(/\*\*(.*?)\*\*/g,(_,t)=>t).split(/(\*\*.*?\*\*)/).map((p,j)=>
+      p.startsWith("**")&&p.endsWith("**")
+        ?<strong key={j} style={{color:"var(--accent)"}}>{p.slice(2,-2)}</strong>
+        :p
+    )}<br/></span>
+  ));
+
+  const suggestions=["Summarize today's meeting","Show pending tasks","Translate to Telugu","Generate PDF report","Show dengue meetings"];
+
+  return(
+    <div style={{maxWidth:680,margin:"0 auto"}}>
+      <div className="card animate-fade-up">
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+          <div style={{width:36,height:36,background:"linear-gradient(135deg,var(--accent),#e8891a)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>🤖</div>
+          <div>
+            <div style={{fontFamily:"var(--font-display)",fontWeight:700}}>MeetIQ Assistant</div>
+            <div style={{fontSize:10,color:"var(--green)"}}>● Online · AI-Powered</div>
+          </div>
+          <div className="status-pill status-live" style={{marginLeft:"auto"}}>GPT-4 Turbo</div>
+        </div>
+
+        <div className="chat-container">
+          <div className="chat-messages">
+            {msgs.map((m,i)=>(
+              <div key={i} className={`chat-msg${m.role==="user"?" user":""}`}>
+                <div className={`chat-avatar${m.role==="ai"?" chat-ai-avatar":" chat-user-avatar"}`}>{m.role==="ai"?"🤖":"U"}</div>
+                <div className={`chat-bubble${m.role==="ai"?" chat-ai":" chat-user-msg"}`}>{formatMsg(m.text)}</div>
+              </div>
+            ))}
+            {typing&&(
+              <div className="chat-msg">
+                <div className="chat-avatar chat-ai-avatar">🤖</div>
+                <div className="chat-bubble chat-ai">
+                  <div className="ai-thinking">
+                    <span className="dot-blink" style={{fontSize:18}}>●</span>
+                    <span className="dot-blink" style={{fontSize:18}}>●</span>
+                    <span className="dot-blink" style={{fontSize:18}}>●</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={endRef}/>
+          </div>
+          <div style={{marginBottom:8,display:"flex",gap:6,flexWrap:"wrap"}}>
+            {suggestions.map(s=>(
+              <button key={s} className="btn btn-ghost btn-sm" style={{fontSize:10}} onClick={()=>{setInput(s)}}>{s}</button>
+            ))}
+          </div>
+          <div className="chat-input-row">
+            <input className="form-input" style={{flex:1}} placeholder="Ask about meetings, actions, summaries…" value={input}
+              onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()}/>
+            <button className="btn btn-primary btn-sm" onClick={send}>Send ⚡</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ANALYTICS */
+function Analytics(){
+  return(
+    <div>
+      <div className="stats-grid" style={{marginBottom:20}}>
+        {[
+          {icon:"📅",val:"128",label:"Total Meetings",variant:"amber"},
+          {icon:"⏱",val:"891h",label:"Hours Recorded",variant:"cyan"},
+          {icon:"📝",val:"2.4M",label:"Words Transcribed",variant:"purple"},
+          {icon:"◈",val:"342",label:"Actions Tracked",variant:"green"},
+        ].map((s,i)=>(
+          <div key={i} className={`stat-card ${s.variant} animate-fade-up`} style={{animationDelay:i*0.06+"s"}}>
+            <div className="stat-icon">{s.icon}</div>
+            <div className="stat-value">{s.val}</div>
+            <div className="stat-label">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid-2">
+        {/* MONTHLY CHART */}
+        <div className="card animate-fade-up anim-d1">
+          <div className="card-title" style={{marginBottom:16}}>Monthly Meeting Volume</div>
+          <div style={{display:"flex",alignItems:"flex-end",gap:8,height:120}}>
+            {[["Jan",12],["Feb",18],["Mar",15],["Apr",22],["May",28],["Jun",0]].map(([m,v])=>(
+              <div key={m} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+                <span style={{fontSize:9,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>{v||""}</span>
+                <div style={{width:"100%",background:v===28?"var(--accent)":"var(--bg-elevated)",borderRadius:"4px 4px 0 0",height:v*4+"px",border:"1px solid var(--border)",minHeight:v?8:0,transition:"height .5s"}}></div>
+                <span style={{fontSize:9,color:"var(--text-muted)"}}>{m}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* DEPT BREAKDOWN */}
+        <div className="card animate-fade-up anim-d2">
+          <div className="card-title" style={{marginBottom:16}}>Department Activity</div>
+          {[["Public Health","34%",34],["Administration","22%",22],["Surveillance","18%",18],["Community","14%",14],["Procurement","12%",12]].map(([d,p,n])=>(
+            <div key={d} style={{marginBottom:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}}>
+                <span style={{color:"var(--text-secondary)"}}>{d}</span>
+                <span style={{color:"var(--accent)",fontWeight:700}}>{p}</span>
+              </div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{width:p,background:`hsl(${n*3+200},70%,60%)`}}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* SETTINGS */
+function Settings(){
+  return(
+    <div style={{maxWidth:680,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
+      {[
+        {title:"🤖 AI Configuration",items:[
+          {label:"Transcription Engine",type:"select",opts:["OpenAI Whisper","Deepgram","AssemblyAI","Google Speech"]},
+          {label:"Primary Language",type:"select",opts:["English + Telugu","English Only","Telugu Only"]},
+          {label:"AI Summary Model",type:"select",opts:["GPT-4 Turbo","GPT-4o","Claude 3 Sonnet"]},
+          {label:"Auto-generate MoM after meeting",type:"toggle",on:true},
+          {label:"Real-time transcription",type:"toggle",on:true},
+        ]},
+        {title:"🔔 Notifications",items:[
+          {label:"Email summaries after meeting",type:"toggle",on:true},
+          {label:"WhatsApp notifications",type:"toggle",on:false},
+          {label:"Telegram bot alerts",type:"toggle",on:false},
+          {label:"Push notifications (PWA)",type:"toggle",on:true},
+          {label:"Action item reminders",type:"toggle",on:true},
+        ]},
+        {title:"🔒 Security",items:[
+          {label:"Two-factor authentication",type:"toggle",on:true},
+          {label:"End-to-end encrypted recordings",type:"toggle",on:true},
+          {label:"Auto-delete recordings after (days)",type:"select",opts:["30","60","90","Never"]},
+        ]},
+        {title:"☁️ Storage",items:[
+          {label:"Primary storage",type:"select",opts:["AWS S3","Firebase Storage","Supabase"]},
+          {label:"Google Drive backup",type:"toggle",on:false},
+          {label:"Auto-compress recordings",type:"toggle",on:true},
+        ]},
+      ].map(sec=>(
+        <div key={sec.title} className="card animate-fade-up">
+          <div className="card-title" style={{marginBottom:16}}>{sec.title}</div>
+          {sec.items.map(item=>(
+            <div key={item.label} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid var(--border)"}}>
+              <span style={{fontSize:13}}>{item.label}</span>
+              {item.type==="toggle"
+                ?<ToggleRow label="" defaultOn={item.on}/>
+                :<select className="form-select" style={{width:"auto",minWidth:160}}>{item.opts.map(o=><option key={o}>{o}</option>)}</select>
+              }
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* NOTIFICATIONS PANEL */
+function NotifPanel({onClose}){
+  return(
+    <div style={{
+      position:"fixed",top:60,right:16,
+      width:320,
+      background:"var(--bg-card)",
+      border:"1px solid var(--border-bright)",
+      borderRadius:"var(--radius)",
+      zIndex:150,
+      boxShadow:"var(--shadow)",
+      animation:"fadeInUp .2s",
+    }}>
+      <div style={{padding:"12px 16px",borderBottom:"1px solid var(--border)",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <div style={{fontFamily:"var(--font-display)",fontWeight:700,fontSize:13}}>Notifications</div>
+        <button style={{background:"none",border:"none",color:"var(--text-muted)",cursor:"pointer"}} onClick={onClose}>✕</button>
+      </div>
+      {NOTIFICATIONS.map(n=>(
+        <div key={n.id} style={{padding:"12px 16px",borderBottom:"1px solid rgba(30,45,74,0.5)",cursor:"pointer",transition:"background .2s"}}
+          onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.02)"}
+          onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+          <div style={{fontSize:12,color:"var(--text-primary)",marginBottom:3}}>{n.msg}</div>
+          <div style={{fontSize:10,color:"var(--text-muted)",fontFamily:"var(--font-mono)"}}>{n.time}</div>
+        </div>
+      ))}
+      <div style={{padding:"10px 16px",textAlign:"center"}}>
+        <button className="btn btn-ghost btn-sm" style={{width:"100%"}}>View All Notifications</button>
+      </div>
+    </div>
+  );
+}
+
+/* ---- APP ---- */
+const PAGES={
+  dashboard:{title:"Dashboard",comp:Dashboard},
+  newmeeting:{title:"New Meeting",comp:NewMeeting},
+  live:{title:"Live Session",comp:LiveSession},
+  transcripts:{title:"Transcripts",comp:()=><Archive/>},
+  summaries:{title:"AI Summaries",comp:Summaries},
+  mom:{title:"Minutes of Meeting",comp:MoM},
+  slides:{title:"Slide Captures",comp:SlideCaptures},
+  archive:{title:"Meeting Archive",comp:Archive},
+  actions:{title:"Action Items",comp:ActionItems},
+  analytics:{title:"Analytics",comp:Analytics},
+  chat:{title:"AI Assistant",comp:AIChat},
+  settings:{title:"Settings",comp:Settings},
+};
+
+function App(){
+  const [active,setActive]=useState("dashboard");
+  const [sidebarOpen,setSidebarOpen]=useState(false);
+  const [showNotif,setShowNotif]=useState(false);
+  const page=PAGES[active]||PAGES.dashboard;
+  const Comp=page.comp;
+  return(
+    <>
+      <Sidebar active={active} setActive={setActive} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+      <div className="main-content">
+        <TopBar title={page.title} setSidebarOpen={setSidebarOpen} setShowNotif={setShowNotif}/>
+        <div className="page-content">
+          <Comp setActive={setActive}/>
+        </div>
+      </div>
+      {showNotif&&<NotifPanel onClose={()=>setShowNotif(false)}/>}
+      {showNotif&&<div style={{position:"fixed",inset:0,zIndex:140}} onClick={()=>setShowNotif(false)}/>}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
