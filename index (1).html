@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MeetIQ AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#070d1a;--surface:#0c1526;--card:#101d33;--elevated:#152240;
+--border:#1a2d4e;--border2:#243d66;
+--amber:#f5a623;--amber2:#ffbe4d;--amber-dim:rgba(245,166,35,0.12);
+--cyan:#00d4ff;--cyan-dim:rgba(0,212,255,0.1);
+--green:#00e676;--green-dim:rgba(0,230,118,0.1);
+--red:#ff4757;--red-dim:rgba(255,71,87,0.1);
+--purple:#a855f7;--purple-dim:rgba(168,85,247,0.1);
+--text:#e2ecff;--text2:#7a9cc8;--text3:#3d5a82;
+--fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;
+--r:10px;--rl:16px;--sh:0 20px 60px rgba(0,0,0,.5);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden}
+#root{display:flex;height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(245,166,35,.04),transparent 60%),
+radial-gradient(ellipse 60% 40% at 80% 100%,rgba(0,212,255,.04),transparent 60%)}
+
+.sidebar{width:220px;min-width:220px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:10;overflow-y:auto}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--amber),#c97d0a);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 0 16px rgba(245,166,35,.35)}
+.sb-logo-text{font-family:var(--fd);font-size:17px;font-weight:800}
+.sb-logo-text span{color:var(--amber)}
+.sb-badge{margin-left:auto;background:var(--amber-dim);color:var(--amber);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;border:1px solid rgba(245,166,35,.25);letter-spacing:.5px}
+.sb-nav{flex:1;padding:10px;display:flex;flex-direction:column;gap:1px}
+.sb-sec{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:12px 8px 5px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:all .18s;color:var(--text2);font-size:12.5px;font-weight:500;position:relative;border:1px solid transparent}
+.sb-item:hover{background:var(--card);color:var(--text)}
+.sb-item.active{background:var(--amber-dim);color:var(--amber);border-color:rgba(245,166,35,.18)}
+.sb-item.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:2.5px;background:var(--amber);border-radius:0 2px 2px 0}
+.sb-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.sb-chip{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px}
+.c-red{background:var(--red-dim);color:var(--red)}.c-amb{background:var(--amber-dim);color:var(--amber)}.c-grn{background:var(--green-dim);color:var(--green)}
+.sb-footer{padding:12px 10px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);cursor:pointer}
+.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.sb-un{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-ur{font-size:10px;color:var(--text3)}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:1}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;position:relative;z-index:10}
+.tb-title{font-family:var(--fd);font-size:16px;font-weight:700;flex:1}
+.tb-right{display:flex;align-items:center;gap:8px}
+.live-pill{display:flex;align-items:center;gap:5px;background:var(--green-dim);border:1px solid rgba(0,230,118,.2);color:var(--green);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:blink 1.2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;border:none;font-family:var(--fb);letter-spacing:.2px;white-space:nowrap}
+.ba{background:var(--amber);color:#000}.ba:hover{background:var(--amber2);box-shadow:0 0 18px rgba(245,166,35,.35)}
+.bg{background:transparent;color:var(--text2);border:1px solid var(--border)}.bg:hover{background:var(--card);color:var(--text);border-color:var(--border2)}
+.bd{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,71,87,.25)}.bd:hover{background:rgba(255,71,87,.2)}
+.bc{background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.bs{padding:5px 10px;font-size:11px}.bi{width:34px;height:34px;padding:0;justify-content:center}
+
+.content{flex:1;overflow-y:auto;padding:24px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:20px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.c-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.c-title{font-family:var(--fd);font-size:13px;font-weight:700}
+.c-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+.hero{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(245,166,35,.08),transparent 70%);pointer-events:none}
+.hero-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.hero-h{font-family:var(--fd);font-size:22px;font-weight:800;margin-bottom:6px}
+.hero-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5}
+.url-row{display:flex;gap:10px;align-items:center}
+.url-wrap{flex:1;display:flex;align-items:center;gap:10px;background:var(--elevated);border:1px solid var(--border2);border-radius:var(--r);padding:0 14px;transition:all .2s}
+.url-wrap:focus-within{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,166,35,.08)}
+.url-in{flex:1;background:transparent;border:none;outline:none;padding:12px 0;color:var(--text);font-size:13px;font-family:var(--fb)}
+.url-in::placeholder{color:var(--text3)}
+.plat-chips{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.p-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--elevated);color:var(--text2);transition:all .18s}
+.p-chip:hover{border-color:var(--border2);color:var(--text)}
+.p-chip.on{border-color:var(--amber);color:var(--amber);background:var(--amber-dim)}
+
+.mtg-container{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:20px}
+.mtg-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--elevated)}
+.mtg-url{flex:1;font-family:var(--fm);font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mtg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-live{background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.2s infinite}
+.dot-idle{background:var(--text3)}
+.frame-wrap{position:relative;width:100%;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.frame-wrap iframe{width:100%;border:none;display:block}
+.frame-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;gap:12px;text-align:center}
+.frame-ph-icon{font-size:48px;opacity:.25}
+
+.rec-bar{display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--elevated);border-top:1px solid var(--border);flex-wrap:wrap}
+.rec-ind{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0}
+.rec-dot.on{animation:recpulse 1s infinite}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,71,87,.5)}50%{box-shadow:0 0 0 6px rgba(255,71,87,0)}}
+.rec-timer{font-family:var(--fm);font-size:13px;color:var(--amber);font-weight:500}
+.waveform{display:flex;align-items:center;gap:2px;height:24px}
+.w-bar{width:3px;border-radius:2px;animation:wave 1s ease-in-out infinite;background:var(--amber);opacity:.7}
+@keyframes wave{0%,100%{height:3px}50%{height:100%}}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:16px 18px;position:relative;overflow:hidden;transition:all .2s}
+.stat:hover{transform:translateY(-2px);border-color:var(--border2)}
+.stat-glow{position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;opacity:.08}
+.stat-icon{font-size:20px;margin-bottom:8px}
+.stat-val{font-family:var(--fd);font-size:26px;font-weight:800;line-height:1}
+.stat-lbl{font-size:10px;color:var(--text3);margin-top:4px;font-weight:500;letter-spacing:.3px}
+.stat-d{font-size:10px;margin-top:6px;font-weight:600}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g21{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+
+.t-line{display:grid;grid-template-columns:85px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid rgba(26,45,78,.5)}
+.t-line:last-child{border-bottom:none}
+.t-time{font-family:var(--fm);font-size:9px;color:var(--text3);padding-top:3px;letter-spacing:.5px}
+.t-spk{font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px;letter-spacing:.3px}
+.t-txt{font-size:12.5px;color:var(--text);line-height:1.55}
+.t-txt.te{font-size:13.5px}
+.t-lang{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;letter-spacing:.5px}
+.l-te{background:var(--purple-dim);color:var(--purple)}.l-en{background:var(--cyan-dim);color:var(--cyan)}
+.t-new{animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.stabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px}
+.stab{padding:9px 16px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.stab:hover{color:var(--text2)}.stab.on{color:var(--amber);border-bottom-color:var(--amber)}
+
+.dec-item{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:var(--elevated);border-radius:var(--r);border:1px solid var(--border);margin-bottom:6px}
+.dec-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px}
+
+.act-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--elevated);border-radius:var(--r);border:1px solid var(--border);margin-bottom:7px;transition:border-color .18s}
+.act-item:hover{border-color:var(--border2)}
+.act-cb{width:16px;height:16px;border:2px solid var(--border2);border-radius:4px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .18s}
+.act-cb.dn{background:var(--amber);border-color:var(--amber);color:#000}
+.act-task{font-size:12px;font-weight:500;color:var(--text)}
+.act-task.dn{text-decoration:line-through;color:var(--text3)}
+.act-meta{display:flex;gap:6px;margin-top:5px;flex-wrap:wrap}
+.a-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px}
+.t-off{background:var(--purple-dim);color:var(--purple)}
+.t-dl{background:var(--red-dim);color:var(--red)}
+.t-dp{background:var(--cyan-dim);color:var(--cyan)}
+.t-pc{background:rgba(255,71,87,.18);color:var(--red)}
+.t-ph{background:var(--amber-dim);color:var(--amber)}
+.t-pm{background:var(--green-dim);color:var(--green)}
+
+.m-card{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--elevated);border-radius:var(--r);border:1px solid var(--border);cursor:pointer;transition:all .18s;margin-bottom:8px}
+.m-card:hover{border-color:var(--border2);transform:translateX(2px)}
+.m-plat{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pz{background:rgba(35,113,244,.15);border:1px solid rgba(35,113,244,.3)}
+.pm{background:rgba(0,172,76,.15);border:1px solid rgba(0,172,76,.3)}
+.pt{background:rgba(100,65,180,.15);border:1px solid rgba(100,65,180,.3)}
+.pw{background:var(--cyan-dim);border:1px solid rgba(0,212,255,.2)}
+.m-info{flex:1;min-width:0}
+.m-title{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-meta{font-size:10px;color:var(--text3);margin-top:3px;display:flex;gap:10px}
+.pill-done{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.pill-live{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--green-dim);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+
+.searchbar{display:flex;align-items:center;gap:8px;background:var(--elevated);border:1px solid var(--border);border-radius:var(--r);padding:0 14px;transition:all .2s;margin-bottom:16px}
+.searchbar:focus-within{border-color:var(--amber)}
+.searchbar input{flex:1;background:transparent;border:none;outline:none;padding:10px 0;font-size:12.5px;color:var(--text);font-family:var(--fb)}
+.searchbar input::placeholder{color:var(--text3)}
+
+.prog{height:4px;background:var(--elevated);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;border-radius:2px;transition:width .6s ease}
+
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);padding:28px;width:100%;max-width:520px;animation:suUp .25s ease}
+@keyframes suUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:6px}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:22px}
+.fl{display:block;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);margin-bottom:6px}
+.fi{width:100%;background:var(--elevated);border:1px solid var(--border2);border-radius:var(--r);padding:10px 14px;color:var(--text);font-size:13px;font-family:var(--fb);outline:none;transition:all .2s}
+.fi:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,166,35,.08)}
+.m-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
+
+.notif-pan{position:fixed;top:56px;right:16px;width:320px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--rl);box-shadow:var(--sh);z-index:150;overflow:hidden;animation:sdDn .2s ease}
+@keyframes sdDn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.notif-hd{padding:14px 16px;border-bottom:1px solid var(--border);font-family:var(--fd);font-size:13px;font-weight:700}
+.n-item{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid rgba(26,45,78,.5);cursor:pointer;transition:background .15s}
+.n-item:hover{background:var(--elevated)}
+.n-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+.chat-wrap{display:flex;flex-direction:column;height:400px}
+.chat-msgs{flex:1;overflow-y:auto;padding:4px 0;display:flex;flex-direction:column;gap:10px}
+.chat-msg{display:flex;gap:8px;align-items:flex-start}
+.chat-msg.user{flex-direction:row-reverse}
+.chat-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.av-ai{background:linear-gradient(135deg,var(--amber),#c97d0a)}.av-u{background:linear-gradient(135deg,var(--purple),var(--cyan))}
+.bub{max-width:82%;padding:9px 13px;border-radius:12px;font-size:12px;line-height:1.55;white-space:pre-line}
+.bub-ai{background:var(--elevated);border:1px solid var(--border);color:var(--text)}
+.bub-u{background:var(--amber-dim);border:1px solid rgba(245,166,35,.2);color:var(--text)}
+.chat-ir{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.chat-sugs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chat-sug{font-size:10px;padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--border2);color:var(--text2);background:var(--elevated);transition:all .15s;white-space:nowrap}
+.chat-sug:hover{border-color:var(--amber);color:var(--amber)}
+
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(26,45,78,.5)}
+.set-row:last-child{border-bottom:none}
+.set-lbl{font-size:13px;font-weight:500}
+.set-desc{font-size:11px;color:var(--text3);margin-top:2px}
+.toggle{width:40px;height:22px;border-radius:11px;background:var(--elevated);border:1px solid var(--border2);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.toggle.on{background:var(--amber);border-color:var(--amber)}
+.t-knob{position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.toggle.on .t-knob{left:21px}
+
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;padding-top:10px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar-rect{width:100%;border-radius:3px 3px 0 0;transition:height .5s ease;min-height:4px}
+.bar-lbl{font-size:9px;color:var(--text3);white-space:nowrap}
+
+.copy-flash{position:fixed;bottom:20px;right:20px;background:var(--green);color:#000;padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight:700;animation:suUp .2s ease;z-index:999}
+
+@media(max-width:900px){.sidebar{display:none}.stats-row{grid-template-columns:repeat(2,1fr)}.g2,.g21{grid-template-columns:1fr}}
+@media(max-width:600px){.content{padding:14px}.g3{grid-template-columns:1fr 1fr}.url-row{flex-direction:column}}
+select,input[type=range]{cursor:pointer}
+input[type=range]{accent-color:var(--amber);width:100%}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef,useMemo}=React;
+
+const PI={zoom:"🎥",meet:"🟢",teams:"🔵",webex:"⚡"};
+const PL={zoom:"Zoom",meet:"Google Meet",teams:"Teams",webex:"WebEx"};
+
+const MEETINGS=[
+  {id:1,title:"District Health Review – Q2 2026",platform:"zoom",date:"2026-05-13",time:"10:02 AM",dur:"1h 24m",status:"done",participants:12,actions:5,ai:true},
+  {id:2,title:"Vaccination Drive Coordination",platform:"meet",date:"2026-05-13",time:"02:30 PM",dur:"45m",status:"live",participants:8,actions:3,ai:false},
+  {id:3,title:"Dengue Prevention Taskforce",platform:"teams",date:"2026-05-12",time:"11:00 AM",dur:"2h 05m",status:"done",participants:15,actions:8,ai:true},
+  {id:4,title:"Field Staff Training Review",platform:"webex",date:"2026-05-11",time:"09:00 AM",dur:"55m",status:"done",participants:22,actions:6,ai:true},
+  {id:5,title:"Budget Allocation – FY26",platform:"zoom",date:"2026-05-15",time:"10:00 AM",dur:"—",status:"pending",participants:0,actions:0,ai:false},
+];
+const TRANSCRIPT=[
+  {id:1,time:"10:02",speaker:"DMHO Dr. Rao",lang:"en",text:"Good morning everyone. Let's begin with the vaccination coverage report."},
+  {id:2,time:"10:03",speaker:"DIO Mrs. Lakshmi",lang:"en",text:"Coverage stands at 68% urban, but rural zones show only 42% completion."},
+  {id:3,time:"10:04",speaker:"DMHO Dr. Rao",lang:"te",text:"గ్రామీణ ప్రాంతాల్లో టీకాల కవరేజ్ చాలా తక్కువగా ఉంది. వెంటనే చర్యలు తీసుకోవాలి."},
+  {id:4,time:"10:05",speaker:"Field Officer Ravi",lang:"en",text:"Cold chain failures in 3 mandals. Emergency repairs sanctioned."},
+  {id:5,time:"10:06",speaker:"DIO Mrs. Lakshmi",lang:"en",text:"Special camps will be arranged in Vikarabad and Medchal by May 20th."},
+  {id:6,time:"10:07",speaker:"DMHO Dr. Rao",lang:"te",text:"జిల్లా మొత్తం మీద నెలాఖరులోగా 85% కవరేజ్ సాధించాలి. అందరూ కలిసి పని చేయాలి."},
+  {id:7,time:"10:09",speaker:"Store Manager",lang:"en",text:"We need 5,000 additional vaccine vials. Budget of Rs. 2.4L approved."},
+  {id:8,time:"10:11",speaker:"CHO Sunitha",lang:"te",text:"ఆశా కార్యకర్తలతో డోర్-టు-డోర్ క్యాంపెయిన్ 22 మే నుండి ప్రారంభిస్తాం."},
+];
+const ACTIONS=[
+  {id:1,task:"Arrange vaccination camps in Vikarabad & Medchal mandals",officer:"DIO Mrs. Lakshmi",deadline:"20 May",dept:"Public Health",priority:"High",done:false},
+  {id:2,task:"Fix cold chain failures in 3 mandals",officer:"Field Officer Ravi",deadline:"16 May",dept:"Logistics",priority:"Critical",done:false},
+  {id:3,task:"Submit rural coverage report to state office",officer:"DMHO Dr. Rao",deadline:"18 May",dept:"Admin",priority:"High",done:true},
+  {id:4,task:"Procure additional vaccine vials – 5000 doses",officer:"Store Manager",deadline:"17 May",dept:"Procurement",priority:"Critical",done:false},
+  {id:5,task:"Coordinate ASHA workers for door-to-door campaign",officer:"CHO Sunitha",deadline:"22 May",dept:"Community",priority:"Medium",done:false},
+];
+
+function Prog({pct,color="#f5a623"}){
+  return <div className="prog"><div className="prog-fill" style={{width:pct+"%",background:color}}/></div>;
+}
+function Toggle({on,onChange}){
+  return <div className={"toggle"+(on?" on":"")} onClick={()=>onChange(!on)}><div className="t-knob"/></div>;
+}
+function PTag({p}){
+  const m={Critical:"t-pc",High:"t-ph",Medium:"t-pm"};
+  return <span className={"a-tag "+(m[p]||"t-pm")}>{p}</span>;
+}
+
+/* SIDEBAR */
+function Sidebar({pg,setPg}){
+  const nav=[
+    {id:"home",icon:"⬡",label:"Dashboard"},
+    {id:"live",icon:"⏺",label:"Live Session",chip:"LIVE",cc:"c-grn"},
+    {sep:"Intelligence"},
+    {id:"transcript",icon:"📝",label:"Transcript"},
+    {id:"summary",icon:"✦",label:"AI Summary"},
+    {id:"mom",icon:"📋",label:"Minutes (MoM)"},
+    {id:"slides",icon:"🖼",label:"Slide Captures"},
+    {sep:"Data"},
+    {id:"archive",icon:"⊘",label:"Archive"},
+    {id:"actions",icon:"◈",label:"Action Items",chip:"4",cc:"c-amb"},
+    {id:"analytics",icon:"◉",label:"Analytics"},
+    {sep:"Tools"},
+    {id:"chat",icon:"⚡",label:"AI Assistant"},
+    {id:"settings",icon:"◌",label:"Settings"},
+  ];
+  return(
+    <div className="sidebar">
+      <div className="sb-logo">
+        <div className="sb-logo-icon">🧠</div>
+        <div className="sb-logo-text">Meet<span>IQ</span></div>
+        <span className="sb-badge">AI</span>
+      </div>
+      <nav className="sb-nav">
+        {nav.map((n,i)=>
+          n.sep
+            ? <div key={i} className="sb-sec">{n.sep}</div>
+            : <div key={n.id} className={"sb-item"+(pg===n.id?" active":"")} onClick={()=>setPg(n.id)}>
+                <span className="sb-icon">{n.icon}</span>
+                <span>{n.label}</span>
+                {n.chip&&<span className={"sb-chip "+n.cc}>{n.chip}</span>}
+              </div>
+        )}
+      </nav>
+      <div className="sb-footer">
+        <div className="sb-user">
+          <div className="sb-av">DR</div>
+          <div style={{flex:1,minWidth:0}}>
+            <div className="sb-un">Dr. D. Ravi Kumar</div>
+            <div className="sb-ur">District Health Officer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* TOPBAR */
+function TopBar({title,setShowNotif,isRec,secs}){
+  const fmt=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+  return(
+    <div className="topbar">
+      <div className="tb-title">{title}</div>
+      <div className="tb-right">
+        {isRec&&<>
+          <div className="rec-ind"><div className="rec-dot on"/><span style={{color:"var(--red)",fontSize:11,fontWeight:700}}>REC</span></div>
+          <span className="rec-timer">{fmt(secs)}</span>
+        </>}
+        <div className="live-pill"><div className="live-dot"/>LIVE</div>
+        <button className="btn bg bi" style={{position:"relative"}} onClick={()=>setShowNotif(p=>!p)}>
+          🔔
+          <span style={{position:"absolute",top:6,right:6,width:7,height:7,background:"var(--red)",borderRadius:"50%",border:"2px solid var(--surface)"}}/>
+        </button>
+        <button className="btn ba bs">+ New Meeting</button>
+      </div>
+    </div>
+  );
+}
+
+/* HOME */
+function Home({setPg,url,setUrl,onJoin}){
+  const [inp,setInp]=useState(url||"");
+  const [plat,setPlat]=useState("zoom");
+  const detect=u=>{
+    if(u.includes("zoom.us"))return "zoom";
+    if(u.includes("meet.google"))return "meet";
+    if(u.includes("teams.microsoft"))return "teams";
+    if(u.includes("webex"))return "webex";
+    return plat;
+  };
+  const handleInp=e=>{setInp(e.target.value);if(e.target.value)setPlat(detect(e.target.value));};
+  const join=()=>{if(!inp.trim())return;setUrl(inp.trim());onJoin(inp.trim(),detect(inp));setPg("live");};
+
+  const stats=[
+    {icon:"🏛",val:"156",lbl:"Total Meetings",d:"+12 this month",c:"var(--amber)"},
+    {icon:"🎙",val:"312h",lbl:"Audio Recorded",d:"28h this week",c:"var(--cyan)"},
+    {icon:"📝",val:"48K",lbl:"Words Transcribed",d:"EN + Telugu",c:"var(--green)"},
+    {icon:"◈",val:"89%",lbl:"Actions Completed",d:"↑ 6% vs last month",c:"var(--purple)"},
+  ];
+  const platList=["zoom","meet","teams","webex"];
+
+  return(
+    <div className="content">
+      <div className="hero">
+        <div className="hero-label">🧠 AI-Powered Meeting Intelligence</div>
+        <div className="hero-h">Join &amp; Analyse Any Meeting</div>
+        <div className="hero-sub">Paste a Zoom, Meet, Teams or WebEx link — MeetIQ joins, records audio, transcribes in English + Telugu, and generates instant AI summaries.</div>
+        <div className="url-row">
+          <div className="url-wrap">
+            <span style={{fontSize:16,color:"var(--text3)"}}>🔗</span>
+            <input className="url-in" value={inp} onChange={handleInp}
+              placeholder="Paste meeting URL — https://zoom.us/j/..."
+              onKeyDown={e=>e.key==="Enter"&&join()}/>
+            {inp&&<span style={{fontSize:13}}>{PI[detect(inp)]}</span>}
+          </div>
+          <button className="btn ba" style={{padding:"12px 22px",fontSize:13}} onClick={join}>⚡ Join Meeting</button>
+        </div>
+        <div className="plat-chips">
+          <span style={{fontSize:11,color:"var(--text3)"}}>Quick test:</span>
+          {platList.map(p=>(
+            <div key={p} className={"p-chip"+(plat===p?" on":"")}
+              onClick={()=>{setPlat(p);setInp(`https://${p==="meet"?"meet.google.com":p==="teams"?"teams.microsoft.com":p+".us"}/demo`)}}>
+              {PI[p]} {PL[p]}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="stats-row">
+        {stats.map((s,i)=>(
+          <div key={i} className="stat">
+            <div className="stat-glow" style={{background:s.c}}/>
+            <div className="stat-icon">{s.icon}</div>
+            <div className="stat-val" style={{color:s.c}}>{s.val}</div>
+            <div className="stat-lbl">{s.lbl}</div>
+            <div className="stat-d" style={{color:s.c,opacity:.8}}>{s.d}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="g2">
+        <div className="card">
+          <div className="c-hd">
+            <div><div className="c-title">📅 Recent Meetings</div></div>
+            <button className="btn bg bs" onClick={()=>setPg("archive")}>View All</button>
+          </div>
+          {MEETINGS.slice(0,4).map(m=>(
+            <div key={m.id} className="m-card" onClick={()=>setPg("archive")}>
+              <div className={"m-plat p"+m.platform[0]}>{PI[m.platform]}</div>
+              <div className="m-info">
+                <div className="m-title">{m.title}</div>
+                <div className="m-meta"><span>{m.date}</span><span>{m.time}</span><span>{m.dur}</span></div>
+              </div>
+              {m.status==="live"
+                ? <span className="pill-live"><span className="live-dot"/>LIVE</span>
+                : m.status==="done"
+                  ? <span className="pill-done">✓ Done</span>
+                  : <span style={{fontSize:9,color:"var(--text3)"}}>Pending</span>}
+            </div>
+          ))}
+        </div>
+
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          <div className="card">
+            <div className="c-hd" style={{marginBottom:10}}><div className="c-title">⚡ Quick Actions</div></div>
+            {[
+              {icon:"🎙",label:"Start Recording",c:"var(--red)",pg:"live"},
+              {icon:"📝",label:"View Transcript",c:"var(--cyan)",pg:"transcript"},
+              {icon:"✦",label:"AI Summary",c:"var(--amber)",pg:"summary"},
+              {icon:"◈",label:"Action Items",c:"var(--green)",pg:"actions"},
+            ].map((a,i)=>(
+              <div key={i} onClick={()=>setPg(a.pg)} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,cursor:"pointer",transition:"all .15s",marginBottom:4,background:"var(--elevated)",border:"1px solid var(--border)"}}>
+                <span style={{fontSize:16,color:a.c}}>{a.icon}</span>
+                <span style={{fontSize:12.5,fontWeight:500}}>{a.label}</span>
+                <span style={{marginLeft:"auto",fontSize:12,color:"var(--text3)"}}>→</span>
+              </div>
+            ))}
+          </div>
+          <div className="card">
+            <div className="c-hd" style={{marginBottom:12}}><div className="c-title">🎯 AI Accuracy</div></div>
+            {[["Transcription (EN)","97%",97,"#00d4ff"],["Transcription (Telugu)","91%",91,"#a855f7"],["Action Detection","88%",88,"#f5a623"],["Summary Quality","94%",94,"#00e676"]].map(([l,v,p,c])=>(
+              <div key={l} style={{marginBottom:10}}>
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:3}}>
+                  <span style={{color:"var(--text2)"}}>{l}</span>
+                  <span style={{fontWeight:700,color:c}}>{v}</span>
+                </div>
+                <Prog pct={p} color={c}/>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* LIVE SESSION */
+function LiveSession({url,plat,isRec,setIsRec,secs,liveTx,audioLv}){
+  const [loaded,setLoaded]=useState(false);
+  const [vol,setVol]=useState(80);
+  const bars=Array.from({length:16},(_,i)=>i);
+
+  return(
+    <div className="content" style={{padding:0,display:"flex",flexDirection:"column",height:"100%"}}>
+      <div className="mtg-container" style={{margin:16,marginBottom:0,flex:url?"1":"0 0 auto"}}>
+        <div className="mtg-bar">
+          <div className={"mtg-dot "+(isRec?"dot-live":"dot-idle")}/>
+          <div className="mtg-url">{url||"No meeting active — paste a URL on Dashboard"}</div>
+          <span style={{fontSize:11,color:"var(--text3)"}}>{plat?PL[plat]:""}</span>
+          {url&&<a href={url} target="_blank" rel="noreferrer" className="btn bg bs" style={{marginLeft:6}}>↗ Open Tab</a>}
+        </div>
+        <div className="frame-wrap" style={{height:url?"380px":"180px"}}>
+          {url
+            ? <iframe src={url} style={{width:"100%",height:"100%"}}
+                allow="camera;microphone;display-capture;fullscreen"
+                onLoad={()=>setLoaded(true)} title="Meeting"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"/>
+            : <div className="frame-ph">
+                <div className="frame-ph-icon">📹</div>
+                <div style={{fontSize:13,color:"var(--text3)",maxWidth:300,lineHeight:1.5}}>Paste a meeting URL on the Dashboard and click "Join Meeting".</div>
+              </div>
+          }
+        </div>
+        <div className="rec-bar">
+          <div className="rec-ind">
+            <div className={"rec-dot"+(isRec?" on":"")}/>
+            <span style={{fontSize:11,fontWeight:700,color:isRec?"var(--red)":"var(--text3)"}}>{isRec?"RECORDING":"STOPPED"}</span>
+          </div>
+          {isRec&&<div className="waveform">{bars.map((b,i)=><div key={b} className="w-bar" style={{animationDelay:i*0.06+"s"}}/>)}</div>}
+          <div style={{flex:1}}/>
+          <div style={{display:"flex",alignItems:"center",gap:6,fontSize:11,color:"var(--text2)"}}>
+            🔊<input type="range" min={0} max={100} value={vol} onChange={e=>setVol(+e.target.value)} style={{width:70}}/>
+            <span style={{fontSize:10,color:"var(--text3)",width:28}}>{vol}%</span>
+          </div>
+          <button className={"btn bs "+(isRec?"bd":"ba")} onClick={()=>setIsRec(p=>!p)}>
+            {isRec?"⏹ Stop":"⏺ Record Audio"}
+          </button>
+          <span style={{fontSize:10,color:"var(--text3)"}}>Audio only · No video</span>
+        </div>
+      </div>
+
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,margin:16,marginTop:14}}>
+        <div className="card" style={{maxHeight:260,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          <div className="c-hd" style={{marginBottom:10}}>
+            <div><div className="c-title">📝 Live Transcript</div><div className="c-sub">EN + Telugu</div></div>
+            <span style={{fontSize:10,color:"var(--cyan)",fontWeight:700}}>AI Whisper</span>
+          </div>
+          <div style={{flex:1,overflow:"auto"}}>
+            {liveTx.map((l,i)=>(
+              <div key={l.id} className={"t-line"+(i===liveTx.length-1?" t-new":"")}>
+                <div className="t-time">{l.time}</div>
+                <div>
+                  <div className="t-spk">{l.speaker} <span className={"t-lang l-"+l.lang}>{l.lang.toUpperCase()}</span></div>
+                  <div className={"t-txt"+(l.lang==="te"?" te":"")}>{l.text}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="card">
+          <div className="c-hd" style={{marginBottom:10}}><div className="c-title">🤖 Live AI Insights</div></div>
+          {[["👥","Speakers","4 active"],["🌐","Languages","EN + Telugu"],["◈","Actions","5 found"],["⏱","Talking","42m / 1h24m"],["🎯","Topic","Vaccination Coverage"]].map(([icon,lbl,val])=>(
+            <div key={lbl} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 0",borderBottom:"1px solid rgba(26,45,78,.4)"}}>
+              <span style={{fontSize:14,width:20,textAlign:"center"}}>{icon}</span>
+              <span style={{flex:1,fontSize:11.5,color:"var(--text2)"}}>{lbl}</span>
+              <span style={{fontSize:11.5,fontWeight:600}}>{val}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* TRANSCRIPT */
+function TranscriptPage(){
+  const [srch,setSrch]=useState("");
+  const [filt,setFilt]=useState("all");
+  const [copied,setCopied]=useState(false);
+  const rows=useMemo(()=>TRANSCRIPT.filter(l=>{
+    const ms=!srch||l.text.toLowerCase().includes(srch.toLowerCase())||l.speaker.toLowerCase().includes(srch.toLowerCase());
+    const mf=filt==="all"||(filt==="en"&&l.lang==="en")||(filt==="te"&&l.lang==="te");
+    return ms&&mf;
+  }),[srch,filt]);
+  const copy=()=>{
+    navigator.clipboard.writeText(TRANSCRIPT.map(l=>`[${l.time}] ${l.speaker}: ${l.text}`).join("\n"));
+    setCopied(true);setTimeout(()=>setCopied(false),2000);
+  };
+  return(
+    <div className="content">
+      <div style={{display:"flex",gap:8,marginBottom:16,alignItems:"center",flexWrap:"wrap"}}>
+        <div className="searchbar" style={{flex:1,marginBottom:0}}>
+          <span style={{color:"var(--text3)"}}>🔍</span>
+          <input placeholder="Search transcript…" value={srch} onChange={e=>setSrch(e.target.value)}/>
+          {srch&&<span style={{cursor:"pointer",color:"var(--text3)"}} onClick={()=>setSrch("")}>✕</span>}
+        </div>
+        {["all","en","te"].map(f=>(
+          <button key={f} className={"btn bs "+(filt===f?"ba":"bg")} onClick={()=>setFilt(f)}>
+            {f==="all"?"All":f==="en"?"English":"తెలుగు"}
+          </button>
+        ))}
+      </div>
+      <div className="card">
+        <div className="c-hd">
+          <div><div className="c-title">📝 Full Transcript</div><div className="c-sub">{rows.length} segments</div></div>
+          <div style={{display:"flex",gap:8}}>
+            <button className="btn bg bs" onClick={copy}>📋 Copy</button>
+            <button className="btn bg bs">⬇ PDF</button>
+            <button className="btn bg bs">⬇ TXT</button>
+          </div>
+        </div>
+        {rows.length===0
+          ? <div style={{textAlign:"center",padding:"40px 0",color:"var(--text3)"}}>No results for "{srch}"</div>
+          : rows.map(l=>(
+              <div key={l.id} className="t-line">
+                <div className="t-time">{l.time}</div>
+                <div>
+                  <div className="t-spk">{l.speaker} <span className={"t-lang l-"+l.lang}>{l.lang.toUpperCase()}</span></div>
+                  <div className={"t-txt"+(l.lang==="te"?" te":"")}>
+                    {srch
+                      ? l.text.split(new RegExp("("+srch+")","i")).map((p,j)=>
+                          p.toLowerCase()===srch.toLowerCase()
+                            ? <mark key={j} style={{background:"var(--amber)",color:"#000",borderRadius:3}}>{p}</mark>
+                            : p
+                        )
+                      : l.text}
+                  </div>
+                </div>
+              </div>
+            ))
+        }
+      </div>
+      {copied&&<div className="copy-flash">✓ Copied!</div>}
+    </div>
+  );
+}
+
+/* SUMMARY */
+function SummaryPage(){
+  const [tab,setTab]=useState("brief");
+  const tlist=["brief","detailed","decisions","actions","telugu"];
+  const content={
+    brief:<div style={{fontSize:13,color:"var(--text2)",lineHeight:1.7}}>
+      <p>The Q2 2026 District Health Review was chaired by <strong style={{color:"var(--text)"}}>DMHO Dr. D. Ravi Kumar</strong>. Key discussion centred on vaccination coverage gaps — <strong style={{color:"var(--amber)"}}>urban at 68%</strong> and rural critically low at <strong style={{color:"var(--red)"}}>42%</strong>, far short of the 85% target.</p>
+      <br/><p>Cold chain failures in 3 mandals were identified as the primary bottleneck. Special camps are planned for Vikarabad and Medchal by May 20th, with ASHA door-to-door campaigns from May 22nd.</p>
+      <br/><p>Procurement of <strong style={{color:"var(--cyan)"}}>5,000 additional vials</strong> (₹2.4L approved) is underway. District must achieve 85% coverage by month end.</p>
+    </div>,
+    detailed:<div style={{fontSize:12.5,color:"var(--text2)",lineHeight:1.7}}>
+      {[["📊 Coverage Status","Urban: 68% · Rural: 42% (critical). Target: 85% by month end."],["❄️ Infrastructure","Cold chain failures in Vikarabad, Medchal, Tandur. Emergency repair sanctioned."],["💊 Procurement","5,000 vials needed. Budget Rs. 2.4L approved. Deadline: May 17."],["📅 Campaign","Special camps: May 18–22. ASHA door-to-door: from May 22."],["📈 Target","All mandals to reach 85% by month end. Review on June 1."]].map(([h,b])=>(
+        <div key={h} style={{marginBottom:14}}><div style={{fontWeight:700,color:"var(--text)",marginBottom:4}}>{h}</div><div>{b}</div></div>
+      ))}
+    </div>,
+    decisions:<div>{["Emergency cold chain repair — 3 mandals — sanctioned","Special vaccination camps: May 18–22","Budget Rs. 2.4L approved for vaccines","ASHA door-to-door campaign from May 22","Next review: June 1 — all officers to report"].map((d,i)=>(
+      <div key={i} className="dec-item"><div className="dec-dot"/><div style={{fontSize:12,color:"var(--text)"}}>{d}</div></div>
+    ))}</div>,
+    actions:<div>{ACTIONS.map(a=>(
+      <div key={a.id} className="act-item">
+        <div className={"act-cb"+(a.done?" dn":"")}>{a.done?"✓":""}</div>
+        <div style={{flex:1}}>
+          <div className={"act-task"+(a.done?" dn":"")}>{a.task}</div>
+          <div className="act-meta">
+            <span className="a-tag t-off">👤 {a.officer}</span>
+            <span className="a-tag t-dl">📅 {a.deadline}</span>
+            <span className="a-tag t-dp">{a.dept}</span>
+            <PTag p={a.priority}/>
+          </div>
+        </div>
+      </div>
+    ))}</div>,
+    telugu:<div style={{fontSize:13.5,color:"var(--text2)",lineHeight:1.8}}>
+      <p>Q2 2026 జిల్లా ఆరోగ్య సమీక్ష సమావేశం DMHO డా. డి. రవి కుమార్ అధ్యక్షతన జరిగింది. <strong style={{color:"var(--amber)"}}>పట్టణ ప్రాంతాల్లో 68%</strong> మరియు గ్రామీణ ప్రాంతాల్లో <strong style={{color:"var(--red)"}}>42%</strong> టీకా కవరేజ్ మాత్రమే నమోదైంది.</p>
+      <br/><p>3 మండలాల్లో కోల్డ్ చెయిన్ వైఫల్యాలు గుర్తించారు. మే 20 కల్లా ప్రత్యేక టీకా శిబిరాలు ఏర్పాటు చేయాలని నిర్ణయించారు.</p>
+      <br/><p><strong style={{color:"var(--cyan)"}}>5,000 అదనపు వ్యాక్సిన్ వయల్స్</strong> సేకరణకు రూ. 2.4 లక్షల బడ్జెట్ ఆమోదించారు.</p>
+    </div>,
+  };
+  return(
+    <div className="content">
+      <div className="card" style={{marginBottom:18}}>
+        <div className="c-hd">
+          <div><div className="c-title">✦ AI Meeting Summary</div><div className="c-sub">District Health Review – Q2 2026 · GPT-4o</div></div>
+          <div style={{display:"flex",gap:8}}><button className="btn bg bs">📋 Copy</button><button className="btn ba bs">⬇ PDF</button></div>
+        </div>
+        <div className="stabs">{tlist.map(t=><div key={t} className={"stab"+(tab===t?" on":"")} onClick={()=>setTab(t)}>{{brief:"Brief",detailed:"Detailed",decisions:"Decisions",actions:"Actions",telugu:"తెలుగు"}[t]}</div>)}</div>
+        {content[tab]}
+      </div>
+      <div className="g3">
+        {[["👥","Participants","12","var(--cyan)"],["⏱","Duration","1h 24m","var(--amber)"],["🌐","Languages","EN + TE","var(--purple)"],["📝","Words","3,428","var(--green)"],["◈","Actions","5","var(--red)"],["🎯","Quality","94%","var(--amber)"]].map(([ic,lb,vl,cl])=>(
+          <div key={lb} className="card" style={{padding:"14px 16px",textAlign:"center"}}>
+            <div style={{fontSize:22,marginBottom:6}}>{ic}</div>
+            <div style={{fontFamily:"var(--fd)",fontSize:20,fontWeight:800,color:cl}}>{vl}</div>
+            <div style={{fontSize:10,color:"var(--text3)",marginTop:3}}>{lb}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* MOM */
+function MoMPage(){
+  return(
+    <div className="content">
+      <div className="card">
+        <div className="c-hd">
+          <div><div className="c-title">📋 Minutes of Meeting</div><div className="c-sub">Auto-generated · Government format</div></div>
+          <div style={{display:"flex",gap:8}}><button className="btn bg bs">📋 Copy</button><button className="btn ba bs">⬇ PDF</button><button className="btn bg bs">⬇ DOCX</button></div>
+        </div>
+        <div style={{background:"var(--elevated)",borderRadius:10,padding:20,border:"1px solid var(--border)"}}>
+          <div style={{textAlign:"center",marginBottom:20,paddingBottom:16,borderBottom:"1px solid var(--border)"}}>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:1.5,color:"var(--amber)",marginBottom:4}}>GOVERNMENT OF TELANGANA</div>
+            <div style={{fontFamily:"var(--fd)",fontSize:16,fontWeight:800,marginBottom:4}}>DISTRICT HEALTH DEPARTMENT, VIKARABAD</div>
+            <div style={{fontSize:12,color:"var(--text2)"}}>MINUTES OF MEETING — AI GENERATED</div>
+          </div>
+          {[["Meeting Title","District Health Review – Q2 2026"],["Date & Time","May 13, 2026 · 10:02 AM"],["Venue","DMHO Conference Hall, Vikarabad"],["Chaired By","Dr. D. Ravi Kumar, DMHO"],["Participants","12 Officers"]].map(([k,v])=>(
+            <div key={k} style={{display:"flex",gap:12,padding:"7px 0",borderBottom:"1px solid rgba(26,45,78,.5)",fontSize:12}}>
+              <span style={{width:120,color:"var(--text3)",fontWeight:600,fontSize:10,letterSpacing:.4,textTransform:"uppercase",flexShrink:0,paddingTop:2}}>{k}</span>
+              <span>{v}</span>
+            </div>
+          ))}
+          <div style={{marginTop:18}}>
+            {[{title:"1. DECISIONS",items:["Emergency cold chain repair sanctioned","Vaccination camps May 18–22","Budget Rs. 2.4L approved","ASHA drives from May 22","Next review: June 1"]},{title:"2. ACTION ITEMS",items:ACTIONS.map(a=>`${a.task} — ${a.officer} (Due: ${a.deadline})`)}].map(({title,items})=>(
+              <div key={title} style={{marginBottom:16}}>
+                <div style={{fontFamily:"var(--fd)",fontSize:12,fontWeight:700,color:"var(--amber)",marginBottom:8,letterSpacing:.5}}>{title}</div>
+                {items.map((item,i)=>(
+                  <div key={i} style={{display:"flex",gap:8,fontSize:12,padding:"4px 0",color:"var(--text2)"}}>
+                    <span style={{color:"var(--amber)",flexShrink:0}}>{i+1}.</span><span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid var(--border)",fontSize:10,color:"var(--text3)",textAlign:"center"}}>Auto-generated by MeetIQ AI · Confidential</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* SLIDES */
+function SlidesPage(){
+  const [sel,setSel]=useState(null);
+  const slides=[
+    {id:1,emoji:"📊",title:"Q2 Vaccination Statistics",notes:"68% urban · 42% rural. Target: 85%."},
+    {id:2,emoji:"❄️",title:"Cold Chain Infrastructure",notes:"3 mandal units failed. Repair sanctioned."},
+    {id:3,emoji:"🎯",title:"Target vs Achievement",notes:"Special drive planned. Budget approved."},
+    {id:4,emoji:"💊",title:"Resource Allocation",notes:"5,000 vials required. Rs. 2.4L approved."},
+    {id:5,emoji:"📅",title:"Action Timeline",notes:"Field camps May 18–22 across rural mandals."},
+    {id:6,emoji:"📌",title:"Next Review Date",notes:"June 1. All officers to submit progress."},
+  ];
+  return(
+    <div className="content">
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div><div style={{fontFamily:"var(--fd)",fontSize:15,fontWeight:700}}>🖼 Slide Captures</div><div style={{fontSize:11,color:"var(--text3)",marginTop:2}}>{slides.length} slides · OCR + AI notes</div></div>
+        <button className="btn bg bs">⬇ Export All</button>
+      </div>
+      <div className="g3">
+        {slides.map(s=>(
+          <div key={s.id} onClick={()=>setSel(s)} style={{background:"var(--card)",border:`1px solid ${sel?.id===s.id?"var(--amber)":"var(--border)"}`,borderRadius:10,overflow:"hidden",cursor:"pointer",transition:"all .2s"}}>
+            <div style={{aspectRatio:"16/9",background:"linear-gradient(135deg,#1a2540,#0d1528)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",fontSize:32,borderBottom:"1px solid var(--border)"}}>
+              {s.emoji}
+              <span style={{position:"absolute",top:6,left:6,background:"rgba(0,0,0,.6)",color:"var(--amber)",fontSize:9,fontWeight:700,padding:"2px 6px",borderRadius:4,fontFamily:"var(--fm)"}}>#{s.id}</span>
+            </div>
+            <div style={{padding:10}}>
+              <div style={{fontSize:11,fontWeight:600,marginBottom:3}}>{s.title}</div>
+              <div style={{fontSize:10,color:"var(--text3)",lineHeight:1.4}}>{s.notes}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {sel&&(
+        <div className="modal-ov" onClick={()=>setSel(null)}>
+          <div className="modal" onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:48,textAlign:"center",marginBottom:12}}>{sel.emoji}</div>
+            <div className="modal-title">{sel.title}</div>
+            <div className="modal-sub">Slide #{sel.id} · AI notes</div>
+            <div style={{background:"var(--elevated)",borderRadius:10,padding:14,fontSize:12.5,color:"var(--text2)",lineHeight:1.6}}>{sel.notes}</div>
+            <div className="m-acts"><button className="btn bg" onClick={()=>setSel(null)}>Close</button><button className="btn ba">⬇ Download</button></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ARCHIVE */
+function Archive(){
+  const [srch,setSrch]=useState("");
+  const rows=MEETINGS.filter(m=>m.title.toLowerCase().includes(srch.toLowerCase()));
+  const platCls={zoom:"pz",meet:"pm",teams:"pt",webex:"pw"};
+  return(
+    <div className="content">
+      <div className="searchbar"><span style={{color:"var(--text3)"}}>🔍</span><input placeholder="Search meetings…" value={srch} onChange={e=>setSrch(e.target.value)}/></div>
+      <div className="card">
+        <div className="c-hd" style={{marginBottom:14}}><div className="c-title">⊘ Meeting Archive</div><div style={{fontSize:11,color:"var(--text3)"}}>{rows.length} records</div></div>
+        {rows.map(m=>(
+          <div key={m.id} className="m-card">
+            <div className={"m-plat "+platCls[m.platform]}>{PI[m.platform]}</div>
+            <div className="m-info">
+              <div className="m-title">{m.title}</div>
+              <div className="m-meta"><span>📅 {m.date}</span><span>⏰ {m.time}</span><span>⏱ {m.dur}</span><span>👥 {m.participants}</span></div>
+            </div>
+            <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
+              {m.ai&&<span style={{fontSize:9,fontWeight:700,padding:"1px 6px",borderRadius:8,background:"var(--amber-dim)",color:"var(--amber)"}}>✦ AI</span>}
+              {m.status==="live"?<span className="pill-live"><span className="live-dot"/>LIVE</span>:m.status==="done"?<span className="pill-done">✓ Done</span>:<span style={{fontSize:9,color:"var(--text3)"}}>Pending</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ACTIONS */
+function ActionItems(){
+  const [items,setItems]=useState(ACTIONS);
+  const tog=id=>setItems(p=>p.map(a=>a.id===id?{...a,done:!a.done}:a));
+  return(
+    <div className="content">
+      <div className="g3" style={{marginBottom:18}}>
+        {[["Total",items.length,"var(--cyan)"],["Pending",items.filter(a=>!a.done).length,"var(--amber)"],["Done",items.filter(a=>a.done).length,"var(--green)"]].map(([l,v,c])=>(
+          <div key={l} className="card" style={{textAlign:"center",padding:"14px 16px"}}>
+            <div style={{fontFamily:"var(--fd)",fontSize:26,fontWeight:800,color:c}}>{v}</div>
+            <div style={{fontSize:10,color:"var(--text3)",marginTop:3}}>{l}</div>
+          </div>
+        ))}
+      </div>
+      <div className="card">
+        <div className="c-hd" style={{marginBottom:14}}><div className="c-title">◈ Action Items</div><button className="btn ba bs">+ Add</button></div>
+        {items.map(a=>(
+          <div key={a.id} className="act-item">
+            <div className={"act-cb"+(a.done?" dn":"")} onClick={()=>tog(a.id)}>{a.done?"✓":""}</div>
+            <div style={{flex:1}}>
+              <div className={"act-task"+(a.done?" dn":"")}>{a.task}</div>
+              <div className="act-meta">
+                <span className="a-tag t-off">👤 {a.officer}</span>
+                <span className="a-tag t-dl">📅 {a.deadline}</span>
+                <span className="a-tag t-dp">{a.dept}</span>
+                <PTag p={a.priority}/>
+              </div>
+            </div>
+            {!a.done&&<button className="btn bg bs" style={{flexShrink:0}} onClick={()=>tog(a.id)}>✓ Done</button>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ANALYTICS */
+function Analytics(){
+  const bars=[{m:"Dec",v:8},{m:"Jan",v:12},{m:"Feb",v:9},{m:"Mar",v:15},{m:"Apr",v:11},{m:"May",v:14}];
+  const mx=Math.max(...bars.map(d=>d.v));
+  return(
+    <div className="content">
+      <div className="stats-row" style={{marginBottom:18}}>
+        {[["🏛","156","Total Meetings","var(--amber)"],["⏱","312h","Total Hours","var(--cyan)"],["◈","89%","Action Rate","var(--green)"],["🌐","48K","Words","var(--purple)"]].map(([ic,vl,lb,cl])=>(
+          <div key={lb} className="stat"><div className="stat-icon">{ic}</div><div className="stat-val" style={{color:cl}}>{vl}</div><div className="stat-lbl">{lb}</div></div>
+        ))}
+      </div>
+      <div className="g2">
+        <div className="card">
+          <div className="c-hd" style={{marginBottom:14}}><div className="c-title">📈 Monthly Volume</div></div>
+          <div className="bar-chart">
+            {bars.map(d=>(
+              <div key={d.m} className="bar-col">
+                <div className="bar-rect" style={{height:(d.v/mx*80)+"px",background:"linear-gradient(to top,var(--amber),rgba(245,166,35,.4))"}}/>
+                <div className="bar-lbl">{d.m}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="card">
+          <div className="c-hd" style={{marginBottom:14}}><div className="c-title">🎯 Platform Split</div></div>
+          {[["Zoom",45,"#2371f4"],["Google Meet",30,"#00ac4c"],["Teams",18,"#6441b4"],["WebEx",7,"var(--cyan)"]].map(([l,p,c])=>(
+            <div key={l} style={{marginBottom:12}}>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:11,marginBottom:4}}>
+                <span style={{color:"var(--text2)"}}>{l}</span>
+                <span style={{fontWeight:700,color:c}}>{p}%</span>
+              </div>
+              <Prog pct={p} color={c}/>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* AI CHAT */
+function AIChat(){
+  const INIT=[{role:"ai",text:"నమస్కారం! I'm MeetIQ Assistant 🤖\n\nI can help you:\n• Summarize meetings in English or Telugu\n• List pending action items\n• Generate PDF/DOCX reports\n• Search transcripts\n\nWhat would you like to do?"}];
+  const [msgs,setMsgs]=useState(INIT);
+  const [inp,setInp]=useState("");
+  const [thinking,setThinking]=useState(false);
+  const ref=useRef();
+  useEffect(()=>ref.current?.scrollIntoView({behavior:"smooth"}),[msgs]);
+  const send=txt=>{
+    const q=txt||inp;
+    if(!q.trim())return;
+    setInp("");
+    setMsgs(p=>[...p,{role:"user",text:q}]);
+    setThinking(true);
+    setTimeout(()=>{
+      const r={
+        "summarize":"**District Health Review – Q2 2026**\n\nVaccination: Urban 68%, Rural 42%. Cold chain failures in 3 mandals. Camps planned May 18–22. Budget ₹2.4L approved.",
+        "pending":"**4 pending action items:**\n\n1. 🔴 Fix cold chain — Ravi (May 16)\n2. 🔴 Procure vaccines — Store Mgr (May 17)\n3. 🟡 Vaccination camps — Mrs. Lakshmi (May 20)\n4. 🟡 ASHA campaign — CHO Sunitha (May 22)",
+        "telugu":"**సమావేశ సారాంశం:**\n\nQ2 2026 లో జిల్లా ఆరోగ్య సమీక్ష జరిగింది. పట్టణ 68%, గ్రామీణ 42% కవరేజ్. కోల్డ్ చెయిన్ వైఫల్యాలు నమోదయ్యాయి.",
+        "pdf":"PDF generation queued!\n✓ Full transcript\n✓ AI summary (EN + Telugu)\n✓ Minutes of Meeting\n✓ Action items\n\nReady in ~30 seconds.",
+      };
+      const k=Object.keys(r).find(k=>q.toLowerCase().includes(k));
+      setMsgs(p=>[...p,{role:"ai",text:k?r[k]:"I found relevant info. Try asking for 'summary', 'pending actions', 'telugu', or 'pdf'."}]);
+      setThinking(false);
+    },1200);
+  };
+  return(
+    <div className="content">
+      <div className="card">
+        <div className="c-hd" style={{marginBottom:12}}>
+          <div className="c-title">⚡ AI Meeting Assistant</div>
+          <div style={{display:"flex",gap:5,alignItems:"center"}}>
+            <div style={{width:6,height:6,borderRadius:"50%",background:"var(--green)",animation:"blink 1.2s infinite"}}/>
+            <span style={{fontSize:10,color:"var(--green)",fontWeight:700}}>ONLINE</span>
+          </div>
+        </div>
+        <div className="chat-sugs">
+          {["Summarize meeting","List pending actions","Telugu summary","Generate PDF","Key decisions","Who spoke most?"].map(s=>(
+            <div key={s} className="chat-sug" onClick={()=>send(s)}>{s}</div>
+          ))}
+        </div>
+        <div className="chat-wrap">
+          <div className="chat-msgs">
+            {msgs.map((m,i)=>(
+              <div key={i} className={"chat-msg"+(m.role==="user"?" user":"")}>
+                <div className={"chat-av "+(m.role==="ai"?"av-ai":"av-u")}>{m.role==="ai"?"🧠":"U"}</div>
+                <div className={"bub "+(m.role==="ai"?"bub-ai":"bub-u")}>{m.text}</div>
+              </div>
+            ))}
+            {thinking&&(
+              <div className="chat-msg">
+                <div className="chat-av av-ai">🧠</div>
+                <div className="bub bub-ai" style={{display:"flex",gap:5,alignItems:"center"}}>
+                  {[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:"var(--amber)",animation:"blink 1s infinite",animationDelay:i*0.2+"s"}}/>)}
+                </div>
+              </div>
+            )}
+            <div ref={ref}/>
+          </div>
+          <div className="chat-ir">
+            <input className="fi" style={{flex:1}} value={inp} onChange={e=>setInp(e.target.value)}
+              placeholder="Ask anything about your meetings…"
+              onKeyDown={e=>e.key==="Enter"&&send()}/>
+            <button className="btn ba" onClick={()=>send()}>Send ↑</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* SETTINGS */
+function Settings(){
+  const [s,setS]=useState({ar:true,ao:true,en:true,te:true,as:true,am:true,em:false,tg:true,dm:true,cm:false});
+  const tog=k=>setS(p=>({...p,[k]:!p[k]}));
+  const groups=[
+    {t:"🎙 Recording",rows:[{k:"ar",l:"Auto-start Recording",d:"Begin when bot joins"},{k:"ao",l:"Audio Only (No Video)",d:"Saves storage"}]},
+    {t:"📝 Transcription",rows:[{k:"en",l:"English",d:"Whisper AI"},{k:"te",l:"Telugu",d:"Mixed EN+TE support"}]},
+    {t:"🤖 AI Features",rows:[{k:"as",l:"Auto Summary",d:"After every meeting"},{k:"am",l:"Auto MoM",d:"Auto Minutes of Meeting"}]},
+    {t:"🔔 Notifications",rows:[{k:"em",l:"Email",d:"Summary via email"},{k:"tg",l:"Telegram",d:"Action reminders"}]},
+    {t:"🎨 Interface",rows:[{k:"dm",l:"Dark Mode",d:"Dark theme"},{k:"cm",l:"Compact Mode",d:"Denser layout"}]},
+  ];
+  return(
+    <div className="content">
+      <div className="g2">
+        {groups.map(g=>(
+          <div key={g.t} className="card">
+            <div style={{fontFamily:"var(--fd)",fontSize:13,fontWeight:700,marginBottom:4,color:"var(--amber)"}}>{g.t}</div>
+            {g.rows.map(r=>(
+              <div key={r.k} className="set-row">
+                <div><div className="set-lbl">{r.l}</div><div className="set-desc">{r.d}</div></div>
+                <Toggle on={s[r.k]} onChange={()=>tog(r.k)}/>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* NOTIF PANEL */
+function NotifPanel(){
+  const items=[
+    {icon:"🟢",cls:"c-grn",text:"Vaccination Drive is LIVE now",time:"2m ago"},
+    {icon:"⚠️",cls:"c-red",text:"Cold chain repair deadline TODAY",time:"1h ago"},
+    {icon:"✦",cls:"c-amb",text:"District Health Review summary ready",time:"3h ago"},
+    {icon:"📅",cls:"c-amb",text:"Budget Meeting tomorrow 10:00 AM",time:"1d ago"},
+  ];
+  return(
+    <div className="notif-pan">
+      <div className="notif-hd">🔔 Notifications <span style={{fontSize:9,background:"var(--red)",color:"#fff",padding:"1px 6px",borderRadius:8,marginLeft:6}}>3 new</span></div>
+      {items.map((n,i)=>(
+        <div key={i} className="n-item">
+          <div className={"n-icon "+n.cls}>{n.icon}</div>
+          <div>
+            <div style={{fontSize:11.5,color:"var(--text)"}}>{n.text}</div>
+            <div style={{fontSize:10,color:"var(--text3)",marginTop:3}}>{n.time}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const TITLES={home:"Dashboard",live:"Live Session",transcript:"Transcript",summary:"AI Summary",mom:"Minutes of Meeting",slides:"Slide Captures",archive:"Meeting Archive",actions:"Action Items",analytics:"Analytics",chat:"AI Assistant",settings:"Settings"};
+
+/* APP */
+function App(){
+  const [pg,setPg]=useState("home");
+  const [url,setUrl]=useState("");
+  const [plat,setPlat]=useState("zoom");
+  const [showNotif,setShowNotif]=useState(false);
+  const [isRec,setIsRec]=useState(false);
+  const [secs,setSecs]=useState(0);
+  const [audioLv,setAudioLv]=useState(6);
+  const [liveTx,setLiveTx]=useState(TRANSCRIPT.slice(0,3));
+
+  useEffect(()=>{
+    let t;
+    if(isRec){t=setInterval(()=>setSecs(p=>p+1),1000);}
+    else setSecs(0);
+    return()=>clearInterval(t);
+  },[isRec]);
+
+  useEffect(()=>{
+    if(!isRec)return;
+    const t=setInterval(()=>setAudioLv(Math.floor(2+Math.random()*9)),150);
+    return()=>clearInterval(t);
+  },[isRec]);
+
+  useEffect(()=>{
+    if(!isRec)return;
+    let idx=3;
+    const t=setInterval(()=>{
+      if(idx<TRANSCRIPT.length)setLiveTx(p=>[...p,TRANSCRIPT[idx++]]);
+      else clearInterval(t);
+    },4000);
+    return()=>clearInterval(t);
+  },[isRec]);
+
+  const onJoin=(u,p)=>{setUrl(u);setPlat(p);};
+
+  const pages={
+    home:<Home setPg={setPg} url={url} setUrl={setUrl} onJoin={onJoin}/>,
+    live:<LiveSession url={url} plat={plat} isRec={isRec} setIsRec={setIsRec} secs={secs} liveTx={liveTx} audioLv={audioLv}/>,
+    transcript:<TranscriptPage/>,
+    summary:<SummaryPage/>,
+    mom:<MoMPage/>,
+    slides:<SlidesPage/>,
+    archive:<Archive/>,
+    actions:<ActionItems/>,
+    analytics:<Analytics/>,
+    chat:<AIChat/>,
+    settings:<Settings/>,
+  };
+
+  return(
+    <>
+      <Sidebar pg={pg} setPg={setPg}/>
+      <div className="main">
+        <TopBar title={TITLES[pg]||"MeetIQ AI"} setShowNotif={setShowNotif} isRec={isRec} secs={secs}/>
+        {pages[pg]||pages.home}
+      </div>
+      {showNotif&&<>
+        <NotifPanel/>
+        <div style={{position:"fixed",inset:0,zIndex:140}} onClick={()=>setShowNotif(false)}/>
+      </>}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
